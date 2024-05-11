@@ -12,18 +12,35 @@ function Login() {
   const { register, handleSubmit } = useForm()
   const [error, setError] = useState("")
   const navigate = useNavigate()
-  const dispath = useDispatch()
+  const dispatch = useDispatch()
 
   const login = async (data) => {
     setError("null")
     try {
-      const createdUser = await axios.post(import.meta.env.VITE_USER_URL + "/login", data)
+
+
+      const  headers = {
+        "content-type": "multipart/form-data",
+        // "Authorization
+      }
+
+      const createdUser = await axios.post(import.meta.env.VITE_USER_URL + "/login", data,
+        {
+          headers:{
+            "Content-Type": "application/json"
+          },
+          withCredentials: true
+        }
+      )
+
       console.log(createdUser.data.data)
       // we get the access token , refresh token and user data
+
       if (createdUser.data.data) {
-        dispath(authLogin(createdUser.data.data))
+        dispatch(authLogin(createdUser.data.data))
         navigate("/")
       }
+
     }
     catch (error) {
       setError(error.response.data.message)

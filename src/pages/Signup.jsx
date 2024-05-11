@@ -17,7 +17,7 @@ function Signup() {
     try {
       const createdUser = await axios.post(import.meta.env.VITE_SIGNUP_URL + "/register", data)
       if (createdUser.data) {
-        dispatch(authLogin(createdUser))
+        // dispatch(authLogin(createdUser))
         navigate("/")
       }
     }

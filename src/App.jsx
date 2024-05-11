@@ -8,23 +8,24 @@ import axios from "axios";
 import { login, logout } from "./store/authSlice";
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  axios.get(import.meta.env.VITE_USER_URL + "/current-user").then((response) => {
-    if (response) {
-      console.log(response.data.data);
-      dispatch(login( response.data.data ));
+  // axios.get(import.meta.env.VITE_USER_URL + "/current-user").then((response) => {
+  //   if (response) {
       
-    }
-    else {
+  //     console.log(response.data.data);
 
-      dispatch(logout());
-      navigate("/login");
-    }
-    setLoading(false);
-  });
+  //     dispatch(login(response.data.data));
+
+  //   }
+  //   else {
+  //     dispatch(logout());
+  //     navigate("/login");
+  //   }
+  //   setLoading(false);
+  // });
 
   return !loading ? (
     <>
@@ -41,7 +42,7 @@ function App() {
         <Footer />
       </div>
     </>
-  ): <h1>LOADING...</h1>;
+  ) : <h1>LOADING...</h1>;
 }
 
 export default App;

@@ -11,33 +11,63 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { logout } from '@/store/authSlice'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
-function AvatarDropdown(avatarUrl, username) {
 
+function AvatarDropdown() {
+
+    const user = useSelector(state => state.auth.userData)
+    const state = useSelector(state => state.auth.status)
+
+    const navigate = useNavigate()
+
+    const avatarUrl = user?.avatar
+    const userName = user?.fullName
+
+    // console.log(avatarUrl)
     const dispatch = useDispatch()
 
-    const logoutHandler = () => {
-        const response = axios.post(import.meta.env.VITE_USER_URL + '/logout')
+    //TODO - Add token to header
 
-        if(!response){
-            throw new Error('Failed to logout')
+    const header = {
+        "content-type": "application/json",
+        // "Authorization": "Bearer"
+    }
+
+    const logoutHandler = async () => {
+
+        if (state) {
+            const response = await axios.post(import.meta.env.VITE_USER_URL + '/logout', {},
+                {
+                    withCredentials: true
+                }
+            )
+    
+            if (!response) {
+                throw new Error('Failed to logout!')
+            }
+    
+            dispatch(logout());
+            
+            navigate('/login')
+    
+            console.log('Logged out', response)
         }
-        dispatch(logout());
     }
 
     return (
         <Avatar>
             <DropdownMenu>
-                <DropdownMenuTrigger><AvatarImage className="rounded-full h-16 w-16 overflow-hidden object-cover" src="https://hips.hearstapps.com/hmg-prod/images/index-john-643f0c7df1e1c.jpg?crop=0.6666666666666666xw:1xh;center,top&resize=1200:*" />
+                <DropdownMenuTrigger><AvatarImage className="rounded-full h-16 w-16 overflow-hidden object-cover" src={avatarUrl} />
                     <AvatarFallback>U</AvatarFallback></DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuLabel>Username</DropdownMenuLabel>
+                    <DropdownMenuLabel>{userName}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
                         <Link to="/profile">Profile</Link>
-                        </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={logoutHandler}>
                         <button onClick={logoutHandler}>Logout</button>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
