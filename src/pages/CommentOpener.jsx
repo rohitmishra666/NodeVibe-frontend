@@ -3,11 +3,14 @@ import Comment from "@/components/Comment";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { useSelector } from "react-redux";
 
 function CommentOpener(props) {
   const [comment, setComment] = useState([]);
   const [inputFocus, setInputFocus] = useState(false);
   const [commentUpdater, setCommentUpdater] = useState(false);
+
+  const userStatus = useSelector((state) => state.auth.status);
 
   const commentRef = useRef(null);
 
@@ -26,8 +29,9 @@ function CommentOpener(props) {
   function addComment(e) {
     e.preventDefault();
     const postComment = async () => {
-      console.log();
+
       const commentContent = commentRef.current?.value;
+
       const response = await axios.post(
         import.meta.env.VITE_COMMENT_URL + `/${props.videoId}`,
         {
@@ -42,12 +46,14 @@ function CommentOpener(props) {
       commentRef.current.value = "";
       setCommentUpdater(!commentUpdater);
       setInputFocus(false);
+
     };
     postComment();
   }
 
   return (
     <>
+      {userStatus && 
       <form onSubmit={addComment}>
         <input
           type="text"
@@ -58,7 +64,7 @@ function CommentOpener(props) {
           }}
         />
         {inputFocus && <Button type="submit">Comment</Button>}
-      </form>
+      </form>}
       {comment &&
         comment.map((c) => (
           <Comment

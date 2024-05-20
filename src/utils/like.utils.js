@@ -1,0 +1,37 @@
+import axios from "axios";
+
+export class Like{
+
+    async toggleVideoLike({videoId}){
+        try {
+            return await axios.post(
+                `${import.meta.env.VITE_LIKE_URL}/toggle/v/${videoId}`,
+            )
+        } catch (error) {
+            console.log("toggleVideoLike :: error", error)
+        }
+    }
+
+    async toggleCommentLike({commentId}){
+        try {
+            return await axios.post(
+                `${import.meta.env.VITE_LIKE_URL}/toggle/c/${commentId}`,
+            )
+        } catch (error) {
+            console.log("toggleCommentLike :: error", error)
+        }
+    }
+
+    async getLikedVideos(){
+        try {
+            return await axios.get(
+                `${import.meta.env.VITE_LIKE_URL}/videos`,
+            )
+        } catch (error) {
+            console.log("getLikedVideos :: error", error)
+        }
+    }
+}
+
+const like = new Like();
+export default like;

@@ -6,9 +6,10 @@ function VideoCard({ thumbnail = "https://images.unsplash.com/photo-152219975583
   title = "About Macbook Pro",
   description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, debitis?",
   duration = "5min",
-  date = "15-march-2024", author = "vines", id = "" }) {
+  date = "15-march-2024", author = "vines", id = "" })
+  {
   const navigate = useNavigate();
-  
+
   return (
     <div className="flex max-w-2xl flex-col items-center rounded-md border md:flex-row  bg-green-400"
       onClick={() => navigate(`/watch/${id}`)}

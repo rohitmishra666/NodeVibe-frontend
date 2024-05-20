@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import VideoPlayer from '@/components/VideoPlayer'
+import VideoPlayer from '../components/VideoPlayer/VideoPlayer'
 import CommentOpener from '../pages/CommentOpener'
 import axios from 'axios'
-
 
 function Video() {
 
@@ -11,18 +10,18 @@ function Video() {
   const param = useParams()
 
   useEffect(() => {
-    async function getVideo() {
+    async function getVideo(){
+
       const response = await axios.get(import.meta.env.VITE_VIDEO_URL + `/${param.videoId}`)
-      const videoFileUrl = response.data.data.video.videoFile
-      console.log(videoFileUrl)
-      setVideo(videoFileUrl)
+      const videoFile = response.data.data.video[0]
+      setVideo(videoFile)
     }
     getVideo()
   }, [param.videoId])
 
   return (
     video && (<div>
-      <VideoPlayer url={`${video}`} />
+      <VideoPlayer data={video} />
       <CommentOpener videoId={`${param.videoId}`} />
     </div>)
   )

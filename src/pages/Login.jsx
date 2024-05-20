@@ -18,12 +18,6 @@ function Login() {
     setError("null")
     try {
 
-
-      const  headers = {
-        "content-type": "multipart/form-data",
-        // "Authorization
-      }
-
       const createdUser = await axios.post(import.meta.env.VITE_USER_URL + "/login", data,
         {
           headers:{
@@ -33,7 +27,6 @@ function Login() {
         }
       )
 
-      console.log(createdUser.data.data)
       // we get the access token , refresh token and user data
 
       if (createdUser.data.data) {

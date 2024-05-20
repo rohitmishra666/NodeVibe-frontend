@@ -20,6 +20,11 @@ function AvatarDropdown() {
     const user = useSelector(state => state.auth.userData)
     const state = useSelector(state => state.auth.status)
 
+    const heightWidth = {
+        width: '50px',
+        height: '50px'
+    }
+
     const navigate = useNavigate()
 
     const avatarUrl = user?.avatar
@@ -43,15 +48,15 @@ function AvatarDropdown() {
                     withCredentials: true
                 }
             )
-    
+
             if (!response) {
                 throw new Error('Failed to logout!')
             }
-    
+
             dispatch(logout());
-            
+
             navigate('/login')
-    
+
             console.log('Logged out', response)
         }
     }
@@ -59,18 +64,32 @@ function AvatarDropdown() {
     return (
         <Avatar>
             <DropdownMenu>
-                <DropdownMenuTrigger><AvatarImage className="rounded-full h-16 w-16 overflow-hidden object-cover" src={avatarUrl} />
-                    <AvatarFallback>U</AvatarFallback></DropdownMenuTrigger>
-                <DropdownMenuContent>
+                <DropdownMenuTrigger>
+                    {(state && <AvatarImage className="rounded-full h-16 w-16 overflow-hidden object-cover" src={avatarUrl} />) ||
+                        (<div onClick={(e) => {
+                            e.preventDefault()
+                            navigate('/login')
+                        }}>
+                            <lord-icon
+                                src="https://cdn.lordicon.com/hrjifpbq.json"
+                                trigger="hover"
+                                colors="primary:#c7c116"
+                                style={heightWidth}
+                            >
+                            </lord-icon>
+                        </div>)
+                    }
+                </DropdownMenuTrigger>
+                {state && <DropdownMenuContent>
                     <DropdownMenuLabel>{userName}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator className='bg-black h-[2px]' />
                     <DropdownMenuItem>
                         <Link to="/profile">Profile</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={logoutHandler}>
                         <button onClick={logoutHandler}>Logout</button>
                     </DropdownMenuItem>
-                </DropdownMenuContent>
+                </DropdownMenuContent>}
             </DropdownMenu>
         </Avatar>
     )

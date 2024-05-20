@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import { login as authLogin } from '@/store/authSlice'
@@ -13,17 +13,33 @@ function Signup() {
   const dispatch = useDispatch()
 
   const signUp = async (data) => {
-    setError("null")
-    try {
-      const createdUser = await axios.post(import.meta.env.VITE_SIGNUP_URL + "/register", data)
-      if (createdUser.data) {
-        // dispatch(authLogin(createdUser))
+    
+      const createdUser = await axios.post(import.meta.env.VITE_USER_URL + "/register",
+      {
+        fullName: data.fullName,
+        email: data.email,
+        password: data.password,
+        username: data.username,
+        avatar: data.avatar[0],
+        coverImage: data.coverImage[0]
+      },
+      {
+        headers: {
+        "Content-Type": "multipart/form-data"
+        },
+        withCredentials: true
+      })
+
+      console.log(createdUser.data.data, "createdUser")
+
+      if (createdUser.data.data) {
+        dispatch(authLogin(createdUser.data.data))
         navigate("/")
       }
-    }
-    catch (error) {
-      setError(error.response.data.message)
-    }
+      else {
+        setError(createdUser.data.message)
+      }
+    
   }
   return (
     <div className="max-w-md mx-auto">
@@ -49,6 +65,7 @@ function Signup() {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="avatar"
             type="file"
+            accept='image/*'
             placeholder=""
           />
         </div>

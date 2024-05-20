@@ -9,9 +9,7 @@ import { login, logout } from "./store/authSlice";
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
+  
   // axios.get(import.meta.env.VITE_USER_URL + "/current-user").then((response) => {
   //   if (response) {
       

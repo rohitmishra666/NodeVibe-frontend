@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import VideoCard from '../components/VideoCard/VideoCard'
+import { v4 as uuid } from 'uuid'
 
 function Home() {
   const [videos, setVideos] = useState([])
+
   useEffect(() => {
-    const allVideos = axios.get(import.meta.env.VITE_VIDEO_URL).then((response) => {
-      setVideos(response.data.data.video)
+    axios.get(import.meta.env.VITE_VIDEO_URL).then((response) => {
+      console.log(response)
+      setVideos(response.data.data.allVideos)
     })
+
   }, [])
 
   return (
-    <div className="w-full flex flex-wrap bg-red-500">
+    <div className="w-full flex flex-wrap gap-4 p-2 bg-red-500">
       {videos.map((video) => (
         <VideoCard
-          key={Date.now()}
+          key={uuid()}
           thumbnail={video.thumbnail}
           title={video.title}
           description={video.description}

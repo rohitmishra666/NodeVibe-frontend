@@ -42,7 +42,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: '/search',
+        path: '/search/:query',
         element: (
           <AuthLayout authentication={false}>
             <Search />
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
       {
         path: '/signup',
         element: (
-          <AuthLayout authentication={true}>
+          <AuthLayout authentication={false}>
             <Signup />
           </AuthLayout>
         )
