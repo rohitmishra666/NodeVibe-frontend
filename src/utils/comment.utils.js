@@ -5,7 +5,10 @@ export class Comment {
     async getVideoComments({ videoId }) {
         try {
             return await axios.get(
-                `${import.meta.env.VITE_COMMENT_URL}/video/${videoId}`,
+                import.meta.env.VITE_COMMENT_URL + `/${videoId}`,
+                {
+                    withCredentials: true,
+                }
             )
         } catch (error) {
             console.log("getVideoComments :: error", error)
@@ -15,7 +18,7 @@ export class Comment {
     async addComment({ videoId, comment }) {
         try {
             return await axios.post(
-                `${import.meta.env.VITE_COMMENT_URL}/add/${videoId}`,
+                import.meta.env.VITE_COMMENT_URL + `/${videoId}`,
                 {
                     content: comment,
                 },
@@ -32,6 +35,9 @@ export class Comment {
         try {
             return await axios.delete(
                 `${import.meta.env.VITE_COMMENT_URL}/c/${commentId}`,
+                {
+                    withCredentials: true,
+                }
             )
         } catch (error) {
             console.log("deleteComment :: error", error)

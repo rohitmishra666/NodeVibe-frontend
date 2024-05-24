@@ -1,5 +1,5 @@
 import React from 'react'
-import Logo from '../Logo'
+import Logo from './Logo'
 import AvatarDropdown from './AvatarDropdown'
 import Search from './Search'
 import Autocomplete from './Autocomplete'

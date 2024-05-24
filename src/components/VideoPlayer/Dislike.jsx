@@ -15,7 +15,8 @@ function Dislike() {
       className='p-1 mt-[1px]'>
         <lord-icon
           src="https://cdn.lordicon.com/xzybfbcm.json"
-          stroke={dislike ? "regular": "bold"}
+          stroke="bold"
+          colors={!dislike ? "": "primary:#9cf4df,secondary:#d4f49c"}
           trigger="hover"
         >
         </lord-icon>

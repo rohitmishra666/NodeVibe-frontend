@@ -10,20 +10,22 @@ function Video() {
   const param = useParams()
 
   useEffect(() => {
-    async function getVideo(){
-
+    async function getVideo() {
       const response = await axios.get(import.meta.env.VITE_VIDEO_URL + `/${param.videoId}`)
       const videoFile = response.data.data.video[0]
       setVideo(videoFile)
     }
+
     getVideo()
   }, [param.videoId])
 
   return (
-    video && (<div>
-      <VideoPlayer data={video} />
-      <CommentOpener videoId={`${param.videoId}`} />
-    </div>)
+    <>
+      {video && (<div>
+        <VideoPlayer data={video} />
+        <CommentOpener videoId={param.videoId} />
+      </div>)}
+    </>
   )
 }
 

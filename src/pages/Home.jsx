@@ -8,7 +8,7 @@ function Home() {
 
   useEffect(() => {
     axios.get(import.meta.env.VITE_VIDEO_URL).then((response) => {
-      console.log(response)
+      // console.log(response.data.data.allVideos[0].views, 'videos to be send in videocard')
       setVideos(response.data.data.allVideos)
     })
 
@@ -17,16 +17,19 @@ function Home() {
   return (
     <div className="w-full flex flex-wrap gap-4 p-2 bg-red-500">
       {videos.map((video) => (
+        
         <VideoCard
           key={uuid()}
           thumbnail={video.thumbnail}
           title={video.title}
           description={video.description}
           duration={video.duration}
-          date={video.date}
-          author={video.author}
+          date={video.createdAt}
+          author={video.username}
           id={video._id}
-        />
+          avatar={video.avatar}
+          views={video.views}
+          />
       ))}
     </div>
   )

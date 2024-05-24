@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import Comment from "@/components/Comment";
+import Comment from "@/components/VideoPlayer/Comment";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
+import comments from "@/utils/comment.utils";
 
 function CommentOpener(props) {
   const [comment, setComment] = useState([]);
@@ -15,36 +15,26 @@ function CommentOpener(props) {
   const commentRef = useRef(null);
 
   useEffect(() => {
+
     async function getComment() {
-      const response = await axios.get(
-        import.meta.env.VITE_COMMENT_URL + `/${props.videoId}`
-      );
-      console.log(response.data.message.comments);
+      const response = await comments.getVideoComments({ videoId: props.videoId })
       const commentData = response.data.message.comments;
+      console.log(commentData, 'commentData')
       setComment(commentData);
     }
     getComment();
   }, [props.videoId, commentUpdater]);
 
   function addComment(e) {
+
     e.preventDefault();
     const postComment = async () => {
 
       const commentContent = commentRef.current?.value;
-
-      const response = await axios.post(
-        import.meta.env.VITE_COMMENT_URL + `/${props.videoId}`,
-        {
-          content: commentContent,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      console.log(response);
-
+      const response = await comments.addComment({ videoId: props.videoId, comment: commentContent });
+      console.log(response, "response");
       commentRef.current.value = "";
-      setCommentUpdater(!commentUpdater);
+      setCommentUpdater((prev) => !prev);
       setInputFocus(false);
 
     };
@@ -73,6 +63,8 @@ function CommentOpener(props) {
             thumbnail={c.commentOwner.avatar}
             username={c.commentOwner.username}
             time={c.createdAt}
+            id={c._id}
+            setCommentUpdater={setCommentUpdater}
           />
         ))}
     </>

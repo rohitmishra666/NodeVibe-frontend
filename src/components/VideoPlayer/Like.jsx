@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import like from '@/utils/like.utils.js'
 
 function Like() {
 
   const param = useParams()
   const user = useSelector(state => state.auth.status)
-  
+  const [liked, setLiked] = useState(true)
   const likeHandler = async () => {
 
     try {
@@ -17,14 +17,10 @@ function Like() {
         return
       }
 
-      const response = await axios.post(import.meta.env.VITE_LIKES_URL + `/toggle/v/${param.videoId}`,
-        {},
-        {
-          withCredentials: true,
-        }
-      )
+      const response = await like.toggleVideoLike({ videoId: param.videoId })
       console.log(response)
-      //response.data.data.liked = true / false
+      // //response.data.data.liked = true / false
+      setLiked(response.data.data.liked)
       //SHOW TOAST accordingly
     }
     catch(error) {
@@ -42,6 +38,7 @@ function Like() {
           src="https://cdn.lordicon.com/jjoolpwc.json"
           trigger="hover"
           stroke="bold"
+          colors={liked ? "": "primary:#9cf4df,secondary:#d4f49c"}
         >
         </lord-icon>
       </button>

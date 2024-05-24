@@ -13,8 +13,8 @@ function Signup() {
   const dispatch = useDispatch()
 
   const signUp = async (data) => {
-    
-      const createdUser = await axios.post(import.meta.env.VITE_USER_URL + "/register",
+
+    const createdUser = await axios.post(import.meta.env.VITE_USER_URL + "/register",
       {
         fullName: data.fullName,
         email: data.email,
@@ -25,21 +25,21 @@ function Signup() {
       },
       {
         headers: {
-        "Content-Type": "multipart/form-data"
+          "Content-Type": "multipart/form-data"
         },
         withCredentials: true
       })
 
-      console.log(createdUser.data.data, "createdUser")
+    console.log(createdUser.data.data, "createdUser")
 
-      if (createdUser.data.data) {
-        dispatch(authLogin(createdUser.data.data))
-        navigate("/")
-      }
-      else {
-        setError(createdUser.data.message)
-      }
-    
+    if (createdUser.data.data) {
+      dispatch(authLogin(createdUser.data.data))
+      navigate("/")
+    }
+    else {
+      setError(createdUser.data.message)
+    }
+
   }
   return (
     <div className="max-w-md mx-auto">
@@ -54,33 +54,6 @@ function Signup() {
             id="fullName"
             type="text"
             placeholder="Enter your full name"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="avatar">
-            Avatar
-          </label>
-          <input
-            {...register("avatar")}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="avatar"
-            type="file"
-            accept='image/*'
-            placeholder=""
-          />
-        </div>
-        {error && <p className="text-red-500 text-xs italic">{error}</p>}
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="coverImage">
-            Cover Image
-          </label>
-          <input
-            {...register("coverImage")}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="coverImage"
-            type="file"
-            accept='image/*'
-            placeholder="Enter URL of your cover image"
           />
         </div>
         <div className="mb-4">
@@ -119,13 +92,52 @@ function Signup() {
             placeholder="Enter your username"
           />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="avatar">
+            Avatar
+          </label>
+          <input
+            {...register("avatar")}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="avatar"
+            type="file"
+            accept='image/*'
+            placeholder=""
+          />
+        </div>
+        {error && <p className="text-red-500 text-xs italic">{error}</p>}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="coverImage">
+            Cover Image
+          </label>
+          <input
+            {...register("coverImage")}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="coverImage"
+            type="file"
+            accept='image/*'
+            placeholder="Enter URL of your cover image"
+          />
+        </div>
+
+
+        <div className="flex flex-col items-center gap-2 justify-center">
+          <p>Already have an account?&nbsp;
+            <a
+              className="text-blue-600 text-lg hover:underline font-semibold"
+              href="/login">
+              Login
+            </a>
+          </p>
           <button
             onClick={handleSubmit(signUp)}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Sign Up
           </button>
+          <p className='bg-transparent text-gray-600 text-center'>
+            By signing up, you agree to our Terms , Privacy Policy and Cookies Policy.
+          </p>
         </div>
       </div>
     </div>

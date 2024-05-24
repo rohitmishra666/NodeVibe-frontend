@@ -20,7 +20,7 @@ function Login() {
 
       const createdUser = await axios.post(import.meta.env.VITE_USER_URL + "/login", data,
         {
-          headers:{
+          headers: {
             "Content-Type": "application/json"
           },
           withCredentials: true
@@ -36,7 +36,7 @@ function Login() {
 
     }
     catch (error) {
-      setError(error.response.data.message)
+      setError(error?.response?.data?.message)
     }
   }
 
@@ -44,9 +44,9 @@ function Login() {
     <div className="max-w-md mx-auto">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+          {/* <label className="block text-gray-700 text-sm text-center font-bold mb-2" htmlFor="email">
             Email
-          </label>
+          </label> */}
           <input
             {...register("email", { required: true })}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -56,9 +56,9 @@ function Login() {
           />
         </div>
         <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+          {/* <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
             Password
-          </label>
+          </label> */}
           <input
             {...register("password", { required: true })}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -67,14 +67,23 @@ function Login() {
             placeholder="Enter your password"
           />
         </div>
-        {error && <p className="text-red-500 text-xs italic">{error}</p>}
-        <div className="flex items-center justify-between">
+        {error !== null && <p className="text-red-500 text-xs italic">{error}</p>}
+        <div className="flex items-center justify-center">
           <Button
             onClick={handleSubmit(login)}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Login
           </Button>
+        </div>
+        <div>
+          <p>Don&apos;t have an account?&nbsp;
+            <a
+              className="text-blue-600 text-lg hover:underline font-semibold"
+              href="/signup">
+              Signup
+            </a>
+          </p>
         </div>
       </div>
     </div>

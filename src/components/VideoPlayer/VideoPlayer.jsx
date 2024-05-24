@@ -9,7 +9,7 @@ import AddToPlaylist from './AddToPlaylist'
 
 function VideoPlayer(props) {
   
-  console.log(props, 'props')
+  // console.log(props, 'props')
 
   return (
     <div>
