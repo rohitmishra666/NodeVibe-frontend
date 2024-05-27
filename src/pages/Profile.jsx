@@ -5,14 +5,16 @@ import dashboard from '@/utils/dashboard.utils';
 import { formatDate } from '@/utils/timeAgo.utils';
 import videoUtils from '@/utils/video.utils';
 import { useForm } from 'react-hook-form';
+import { v4 as uuid } from 'uuid';
 
 const Profile = () => {
   const userData = useSelector((state) => state.auth.userData);
-  console.log(userData, 'userData')
   const [videos, setVideos] = useState([]);
   const [channelStats, setChannelStats] = useState({});
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, setValue } = useForm();
   const [showModal, setShowModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editVideoId, setEditVideoId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,15 +27,42 @@ const Profile = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    // Handle form submission logic
+    console.log(data, 'form data');
 
-    console.log(data);
-    const response = await videoUtils.publishVideo(data);
-    console.log(response, 'Video uploaded successfully');
-    // Reset form and close modal
-    reset();
-    setShowModal(false);
+    if (editMode) {
+      const response = await videoUtils.updateVideo(data, editVideoId);
+      console.log(response, 'Video updated successfully');
+    } else {
+      const response = await videoUtils.publishVideo(data);
+      console.log(response, 'Video uploaded successfully');
+    }
+    const channelVideos = await dashboard.getChannelVideos();
+    setVideos(channelVideos.data.data.videos);
+    reset(); 
+    setShowModal(false); 
+    setEditMode(false); 
   };
+
+  const deleteVideo = async (videoId) => {
+    const response = await videoUtils.deleteVideo({ videoId });
+    setVideos(videos.filter(video => video._id !== videoId));
+    console.log(response, 'Video deleted successfully!');
+  }
+
+  const editVideo = (video) => {
+    setEditMode(true);
+    setEditVideoId(video._id);
+    setValue('title', video.title);
+    setValue('description', video.description);
+    setShowModal(true);
+  }
+
+  const openUploadModal = () => {
+    setEditMode(false);
+    setEditVideoId(null);
+    reset(); 
+    setShowModal(true);
+  }
 
   return (
     <div className="bg-gray-900 text-white p-6 min-h-screen w-full">
@@ -45,7 +74,7 @@ const Profile = () => {
           <StatItem icon={<FaHeart />} label="Total likes" value={channelStats?.totalLikes} />
         </div>
         <button
-          onClick={() => setShowModal(true)}
+          onClick={openUploadModal}
           className="mt-6 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center"
         >
           <FaPlus className="mr-2" /> Upload video
@@ -65,15 +94,17 @@ const Profile = () => {
           </thead>
           <tbody>
             {videos.map((video) => (
-              <tr key={video._id} className="bg-gray-700 odd:bg-gray-600 w-full">
-                <td className="px-4 py-2 text-center"><StatusToggle status={video.isPublished} id={video._id} /></td>
+              <tr key={uuid()} className="bg-gray-700 odd:bg-gray-600 w-full">
+                <td className="px-4 py-2 text-center"><StatusToggle status={video.isPublished} id={uuid()} /></td>
                 <td className="px-4 py-2 text-center"><img src={video.thumbnail} alt={video.title} className="w-12 h-12 rounded-full" /></td>
                 <td className="px-4 py-2">{video.title}</td>
                 <td className="px-4 py-2">{video.likes} likes</td>
                 <td className="px-4 py-2">{formatDate(video.createdAt.slice(0, 10))}</td>
                 <td className="px-4 py-2 text-center">
-                  <button className="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                  <button className="text-red-500 hover:text-red-700">🗑️</button>
+                  <button className="text-blue-500 hover:text-blue-700 mr-2" onClick={() => editVideo(video)}>✏️</button>
+                  <button
+                    onClick={() => deleteVideo(video._id)}
+                    className="text-red-500 hover:text-red-700">🗑️</button>
                 </td>
               </tr>
             ))}
@@ -88,8 +119,8 @@ const Profile = () => {
             <button className="absolute top-2 right-2 text-3xl text-gray-400 hover:text-white" onClick={() => setShowModal(false)}>
               &times;
             </button>
-            <h2 className="text-xl mb-4">Upload New Video</h2>
-            <form className="space-y-4">
+            <h2 className="text-xl mb-4">{editMode ? 'Edit Video' : 'Upload New Video'}</h2>
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <div>
                 <label className="block text-sm">Title</label>
                 <input
@@ -109,21 +140,21 @@ const Profile = () => {
               <div>
                 <label className="block text-sm">Thumbnail</label>
                 <input
+                  className="w-full px-4 py-2 h-auto bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                   type="file"
                   accept='image/*'
                   {...register('thumbnail')}
-                  className="w-full px-4 py-2 h-auto bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                 />
               </div>
-              <div>
+              {!editMode && (<div>
                 <label className="block text-sm">Video</label>
                 <input
+                  className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                   type="file"
                   accept='video/*'
                   {...register('videoFile')}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                 />
-              </div>
+              </div>)}
               <div className="text-right">
                 <button
                   type="button"
@@ -132,12 +163,9 @@ const Profile = () => {
                 >
                   Cancel
                 </button>
-                <button 
-                onClick={(e)=>{
-                  // e.preventDefault()
-                  handleSubmit(onSubmit)}}
-                type="submit" className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg">
-                  Upload
+                <button
+                  type="submit" className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg">
+                  {editMode ? 'Save Changes' : 'Upload'}
                 </button>
               </div>
             </form>
@@ -162,7 +190,6 @@ const StatusToggle = ({ status, id }) => {
   const [isPublished, setIsPublished] = useState(status);
 
   const toggleStatus = async () => {
-    // Call the toggleStatus API
     const response = await videoUtils.toggleStatus({ videoId: id });
     console.log(response);
     setIsPublished(!isPublished);
@@ -171,7 +198,7 @@ const StatusToggle = ({ status, id }) => {
   return (
     <label className="inline-flex items-center cursor-pointer relative">
       <input type="checkbox" checked={isPublished} onChange={toggleStatus} className="sr-only" />
-      <div className="w-10 h-6 bg-gray-300 rounded-full shadow-inner"></div>
+      <div className="w-10 h-6 bg-gray-400 rounded-full shadow-inner"></div>
       <div className={`dot w-4 h-4 bg-white rounded-full shadow absolute transform transition-transform ${isPublished ? 'translate-x-5' : 'translate-x-1'}`}></div>
       <span className={`ml-3 ${isPublished ? 'text-green-500' : 'text-red-500'}`}>
         {isPublished ? 'Published' : 'Unpublished'}

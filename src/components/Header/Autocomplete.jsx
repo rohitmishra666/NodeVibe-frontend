@@ -3,6 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import axios from 'axios'
 import useDebounce from '@/custom-hooks/useDebounce'
 import { useNavigate } from 'react-router-dom'
+import {v4 as uuid} from 'uuid'
 
 let debouncedAutocomplete = null
 
@@ -18,7 +19,6 @@ function Autocomplete() {
       return
     }
     axios.post(import.meta.env.VITE_SEARCH_URL, { query: query }).then((response) => {
-      console.log(response.data.data.searchResult)
       setSearchResult(response.data.data.searchResult)
     })
 
@@ -33,7 +33,7 @@ function Autocomplete() {
           <ScrollArea>
             {searchResult.map((result) => (
               <div
-                key={Date.now()}
+                key={uuid()}
                 className='flex flex-row items-center'
                 onClick={() => {
                   setSearchResult([])

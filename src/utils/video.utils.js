@@ -9,15 +9,15 @@ export class Video {
         }
     }
 
-    async publishVideo({ title, description, videoFile, thumbnail }) {
+    async publishVideo(data) {
         try {
             return await axios.post(
                 import.meta.env.VITE_VIDEO_URL + "/publish",
                 {
-                    title: title,
-                    description: description,
-                    thumbnail: thumbnail,
-                    videoFile: videoFile
+                    title: data.title,
+                    description: data.description,
+                    thumbnail: data.thumbnail[0],
+                    videoFile: data.videoFile[0]
                 },
                 {
                     headers: {
@@ -33,18 +33,30 @@ export class Video {
 
     async getVideoById({ videoId }) {
         try {
-            return await axios.get(`${import.meta.env.VITE_VIDEO_URL}/${videoId}`)
+            return await axios.get(
+                import.meta.env.VITE_VIDEO_URL + `/${videoId}`,
+                {
+                    withCredentials: true
+                }
+            )
         } catch (error) {
             console.log("getVideoById :: error", error)
         }
     }
 
-    async updateVideo({ videoId, title, description, thumbnail }) {
+    async updateVideo(data, videoId) {
         try {
             return await axios.patch(
                 `${import.meta.env.VITE_VIDEO_URL}/${videoId}`,
-                { title, description, thumbnail },
                 {
+                    title: data.title,
+                    description: data.description,
+                    thumbnail: data.thumbnail[0],
+                },
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    },
                     withCredentials: true,
                 }
             )
@@ -55,7 +67,11 @@ export class Video {
 
     async deleteVideo({ videoId }) {
         try {
-            return await axios.delete(`${import.meta.env.VITE_VIDEO_URL}/${videoId}`)
+            return await axios.delete(`${import.meta.env.VITE_VIDEO_URL}/${videoId}`,
+                {
+                    withCredentials: true,
+                }
+            )
         } catch (error) {
             console.log("deleteVideo :: error", error)
         }

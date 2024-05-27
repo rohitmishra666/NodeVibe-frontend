@@ -4,6 +4,7 @@ export class User {
 
     async register(data) {
         try {
+            console.log("register :: data", data)
             return await axios.post(import.meta.env.VITE_USER_URL + "/register",
                 {
                     fullName: data.fullName,

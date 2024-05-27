@@ -9,7 +9,7 @@ function Home() {
   useEffect(() => {
     videoUtils.getAllVideos()
       .then((response)=>{
-        console.log(response)
+        // console.log(response)
         setVideos(response.data.data.allVideos)
       })
     }, [])
