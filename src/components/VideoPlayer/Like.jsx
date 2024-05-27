@@ -9,7 +9,6 @@ function Like() {
   const user = useSelector(state => state.auth.status)
   const [liked, setLiked] = useState(true)
   const likeHandler = async () => {
-
     try {
       if(!user) {
         // TODO TOAST: Login to like the video

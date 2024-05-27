@@ -9,23 +9,52 @@ import {
 } from "@/components/ui/sheet"
 
 function Navbar() {
+
+    const heightWidth = {
+        height: "40px",
+        width: "40px",
+    }
+
     return (
-        <div>
-            <Sheet>
-                <SheetTrigger className='bg-white'>Open</SheetTrigger>
-                <SheetContent className="bg-slate-500 w-1/6">
-                    <SheetHeader>
-                        <SheetTitle>Are you absolutely sure?</SheetTitle>
-                        <SheetDescription>
-                            This action cannot be undone. This will permanently delete your account
-                            and remove your data from our servers.
-                        </SheetDescription>
-                    </SheetHeader>
-                </SheetContent>
-            </Sheet>
+        <div className="flex flex-col">
+            <button className="flex items-center justify-center w-16 h-16 bg-blue-500 text-white">
+                <lord-icon
+                    src="https://cdn.lordicon.com/cnpvyndp.json"
+                    trigger="hover"
+                    colors="primary:#ffffff"
+                    style={heightWidth}>
+                </lord-icon>
+            </button>
+            <button className="flex items-center justify-center w-16 h-16 bg-blue-500 text-white">
+                <lord-icon
+                    src="https://cdn.lordicon.com/xyboiuok.json"
+                    trigger="hover"
+                    colors="primary:#ffffff"
+                    style={heightWidth}>
+                </lord-icon>
+            </button>
+            <button className="flex items-center justify-center w-16 h-16  text-white">
+                <lord-icon
+                    src="https://cdn.lordicon.com/vuiggmtc.json"
+                    trigger="hover"
+                    colors="primary:#ffffff"
+                    style={heightWidth}>
+                </lord-icon>
+            </button>
+            <button className="flex items-center justify-center w-16 h-16  text-white">
+                <lord-icon
+                    src="https://cdn.lordicon.com/tdxypxgp.json"
+                    trigger="hover"
+                    colors="primary:#ffffff"
+                    style={heightWidth}>
+                </lord-icon>
+            </button>
+
+
 
         </div>
     )
 }
+
 
 export default Navbar

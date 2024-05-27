@@ -1,4 +1,4 @@
-import axios from 'axios'
+import userUtils from '@/utils/user.utils'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -15,17 +15,10 @@ function Login() {
   const dispatch = useDispatch()
 
   const login = async (data) => {
-    setError("null")
+    setError(null)
     try {
 
-      const createdUser = await axios.post(import.meta.env.VITE_USER_URL + "/login", data,
-        {
-          headers: {
-            "Content-Type": "application/json"
-          },
-          withCredentials: true
-        }
-      )
+      const createdUser = await userUtils.login(data)
 
       // we get the access token , refresh token and user data
 

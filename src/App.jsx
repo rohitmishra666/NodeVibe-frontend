@@ -9,14 +9,13 @@ import { login, logout } from "./store/authSlice";
 
 function App() {
   const [loading, setLoading] = useState(false);
-  
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   // axios.get(import.meta.env.VITE_USER_URL + "/current-user").then((response) => {
   //   if (response) {
-      
   //     console.log(response.data.data);
-
   //     dispatch(login(response.data.data));
-
   //   }
   //   else {
   //     dispatch(logout());
@@ -27,20 +26,22 @@ function App() {
 
   return !loading ? (
     <>
-      <div className="absolute  min-h-screen w-full items-center bg-slate-700">
+      <div className="flex flex-col min-h-screen">
         <Header />
-        <div className="flex">
-          <div className="hidden sm:flex w-36 bg-blue-500 sm:items-center sm:justify-center">
+        <div className="flex flex-row flex-grow">
+          <div className="hidden sm:flex w-16 bg-blue-500 sm:items-center sm:justify-center">
             <Navbar />
           </div>
-          <div className="w-full flex flex-wrap bg-stone-500">
+          <div className="w-full flex flex-row bg-fuchsia-300">
             <Outlet />
           </div>
         </div>
         <Footer />
       </div>
     </>
-  ) : <h1>LOADING...</h1>;
+  ) : (
+    <h1>LOADING...</h1>
+  );
 }
 
 export default App;

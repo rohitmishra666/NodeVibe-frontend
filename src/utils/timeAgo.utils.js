@@ -24,6 +24,12 @@ export function timeAgo(createdAt) {
     }
 }
 
+export const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { day: '2-digit', month: 'long', year: 'numeric' };
+    return new Intl.DateTimeFormat('en-GB', options).format(date);
+  };
+
 export const time = (duration)=>{
     let min = Math.floor(duration / 60);
     let sec = Math.floor(duration % 60);

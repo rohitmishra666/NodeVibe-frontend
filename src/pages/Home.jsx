@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import videoUtils from '../utils/video.utils'
 import VideoCard from '../components/VideoCard/VideoCard'
 import { v4 as uuid } from 'uuid'
 
@@ -7,16 +7,16 @@ function Home() {
   const [videos, setVideos] = useState([])
 
   useEffect(() => {
-    axios.get(import.meta.env.VITE_VIDEO_URL).then((response) => {
-      // console.log(response.data.data.allVideos[0].views, 'videos to be send in videocard')
-      setVideos(response.data.data.allVideos)
-    })
-
-  }, [])
+    videoUtils.getAllVideos()
+      .then((response)=>{
+        console.log(response)
+        setVideos(response.data.data.allVideos)
+      })
+    }, [])
 
   return (
-    <div className="w-full flex flex-wrap gap-4 p-2 bg-red-500">
-      {videos.map((video) => (
+    <div className="w-full flex flex-wrap gap-4 p-2 bg-inherit h-auto">
+      {videos && videos.map((video) => (
         
         <VideoCard
           key={uuid()}

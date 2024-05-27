@@ -6,9 +6,9 @@ import Autocomplete from './Autocomplete'
 
 function Header() {
     return (
-        <header className=" w-full">
-            <div className='flex flex-row  justify-between'>
-                <div className='sm:basis-1/5 sm:px-4 w-auto my-2'>
+        <header className="w-full bg-gray-700">
+            <div className='flex flex-row  w-full justify-between'>
+                <div className=' sm:px-4 w-auto my-2'>
                     <Logo />
                 </div>
                 <div className='sm:basis-2/4 sm:px-2 p-2 h-16 my-2 flex flex-col'>
