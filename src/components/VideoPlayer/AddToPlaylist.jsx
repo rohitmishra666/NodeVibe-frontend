@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import playlist from '../../utils/playlist.utils';
 import { useSelector } from 'react-redux';
 import { Button } from "@/components/ui/button";
@@ -13,47 +13,48 @@ import {
 import { useParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AddToPlaylist() {
-
-  const user = useSelector(state => state.auth.userData);
+  const user = useSelector((state) => state.auth.userData);
   const [userPlaylist, setUserPlaylist] = useState([]);
+  const [showNewPlaylistForm, setShowNewPlaylistForm] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const nameRef = useRef();
   const descriptionRef = useRef();
   const param = useParams();
 
   const handleCheckboxChange = async (playlistId, isChecked) => {
-    if (isChecked) {
-      await removeVideoFromPlaylist({ playlistId });
+    const action = isChecked ? removeVideoFromPlaylist : addVideoToPlaylist;
+    toast.promise(action({ playlistId }), {
+      pending: isChecked ? 'Removing video from playlist...' : 'Adding video to playlist...',
+      success: isChecked ? 'Video removed from playlist!' : 'Video added to playlist!',
+      error: 'Error updating playlist',
+    });
 
-    } else {
-      await addVideoToPlaylist({ playlistId });
-    }
     setUserPlaylist((prevUserPlaylist) =>
       prevUserPlaylist.map((playlist) => {
         if (playlist._id === playlistId) {
           const newVideos = isChecked
-            ? playlist.videos.filter(video => video !== param.videoId)
+            ? playlist.videos.filter((video) => video !== param.videoId)
             : [...playlist.videos, { _id: param.videoId }];
-          return { ...playlist, videos: newVideos, isChecked: !isChecked};
+          return { ...playlist, videos: newVideos, isChecked: !isChecked };
         }
-        console.log(playlist, 'playlist');
         return playlist;
       })
     );
-    // getUserPlaylist();
   };
 
   const addVideoToPlaylist = async ({ playlistId }) => {
     try {
       const addVideo = await playlist.addVideoToPlaylist({
         playlistId: playlistId,
-        videoId: param.videoId
+        videoId: param.videoId,
       });
-      console.log(addVideo);
       return addVideo;
     } catch (error) {
-      console.log('Error adding video to playlist: ', error);
+      throw new Error('Error adding video to playlist');
     }
   };
 
@@ -61,12 +62,11 @@ function AddToPlaylist() {
     try {
       const removeVideo = await playlist.removeVideoFromPlaylist({
         playlistId: playlistId,
-        videoId: param.videoId
+        videoId: param.videoId,
       });
-      console.log(removeVideo);
       return removeVideo;
     } catch (error) {
-      console.log('Error removing video from playlist: ', error);
+      throw new Error('Error removing video from playlist');
     }
   };
 
@@ -76,31 +76,30 @@ function AddToPlaylist() {
         playlistName: nameRef.current.value,
         description: descriptionRef.current.value,
       });
-      console.log(newPlaylist);
 
-      const addedVideo = await addVideoToPlaylist({
+      await addVideoToPlaylist({
         playlistId: newPlaylist.data.data.playlist._id,
       });
-      console.log(addedVideo);
-      await getUserPlaylist(); // Update the playlist after creating a new one
+
+      // Close the modal after success
+      setDialogOpen(false);
+      setShowNewPlaylistForm(false);
     } catch (error) {
-      console.log('Error creating playlist: ', error);
+      throw new Error('Error creating playlist');
     }
   };
 
   const getUserPlaylist = async () => {
     try {
       const userPlaylist = await playlist.getUserPlaylists({ userId: user._id });
-      const updatedPlaylist = userPlaylist.data.data.userPlaylists
-        .map((playlist) => {
-          return {
-            ...playlist,
-            isChecked: playlist.videos.some(video => video === param.videoId)
-          }
-         });
-         console.log(updatedPlaylist, 'updatedPlaylist');
+      const updatedPlaylist = userPlaylist.data.data.userPlaylists.map((playlist) => {
+        return {
+          ...playlist,
+          isChecked: playlist.videos.some((video) => video === param.videoId),
+        };
+      });
+      setShowNewPlaylistForm(false);
       setUserPlaylist(updatedPlaylist);
-      // console.log(userPlaylist, 'userPlaylist');
     } catch (error) {
       console.log('Error getting user playlists: ', error);
     }
@@ -109,6 +108,7 @@ function AddToPlaylist() {
   const playlistHandler = async () => {
     try {
       if (!user) {
+        toast.error('Login to add to playlist');
         console.log('Login to add to playlist');
         return null;
       }
@@ -120,63 +120,90 @@ function AddToPlaylist() {
 
   return (
     <div>
-      <Dialog>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
-          <button onClick={playlistHandler} className='pt-1'>
+          <button onClick={playlistHandler} className="pt-1">
             <lord-icon
               src="https://cdn.lordicon.com/ktcdipjm.json"
               trigger="hover"
               stroke="bold"
-            >
-            </lord-icon>
+              colors="primary:#ffffff,secondary:#9cf4df"
+            ></lord-icon>
           </button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[450px] bg-gray-600">
+        <DialogContent className="sm:max-w-[300px] bg-gray-800 p-4">
           <DialogHeader>
-            <DialogTitle>Add to Playlist</DialogTitle>
+            <DialogTitle className='text-white'>Add to Playlist</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-
-            {userPlaylist && userPlaylist.map((playlist) => {
-
-              // const isChecked = playlist.videos.some(video => {
-              //   return video === param.videoId;
-              // });
-
-              // console.log(isChecked, 'isChecked');
-
-              return (
-                <div key={playlist._id} className="flex flex-row gap-1 justify-center items-center">
-                  <input
-                    type="checkbox"
-                    id={playlist._id}
-                    checked={playlist.isChecked}
-                    onChange={() => {
-                      handleCheckboxChange(playlist._id, playlist.isChecked)
-                    }}
-                  />
-                  <label htmlFor={playlist._id}>{playlist.name}</label>
+          <div className="flex flex-col items-center justify-center py-4 text-center w-full">
+            <ul className="list-none w-full">
+              {userPlaylist &&
+                userPlaylist.map((playlist) => (
+                  <li key={playlist._id} className="flex items-center w-[50%] ml-20 mb-2">
+                    <input
+                      type="checkbox"
+                      id={playlist._id}
+                      checked={playlist.isChecked}
+                      className="h-5 w-5"
+                      onChange={() => handleCheckboxChange(playlist._id, playlist.isChecked)}
+                    />
+                    <label
+                      className="text-white cursor-pointer ml-2"
+                      htmlFor={playlist._id}
+                    >
+                      {playlist.name}
+                    </label>
+                  </li>
+                ))}
+            </ul>
+            {!showNewPlaylistForm && 
+            <Button 
+            onClick={() => setShowNewPlaylistForm((prev) => !prev)} 
+            className="mt-4 bg-blue-500 hover:bg-green-600">
+              Create
+            </Button>}
+            {showNewPlaylistForm && (
+              <>
+                <div className="flex flex-col w-full mt-4">
+                  <div className="flex flex-row items-center mb-2">
+                    <Label htmlFor="name" className="w-2/4 text-right text-white text-base pr-2">Name</Label>
+                    <Input id="name" ref={nameRef} className="w-full px-4 py-2 text-white text-base bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                  <div className="flex flex-row items-center mb-2">
+                    <Label htmlFor="description" className="w-2/4 text-right text-white text-base pr-2">Description</Label>
+                    <Input id="description" ref={descriptionRef} className="w-full px-4 py-2 text-white text-base bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
                 </div>
-              );
-            })}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input id="name" ref={nameRef} className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
-              <Input id="description" ref={descriptionRef} className="col-span-3" />
-            </div>
+                <DialogFooter className="w-full flex justify-end mt-4">
+                  <Button
+                    type="button"
+                    className="bg-gray-500 hover:bg-gray-600 mr-2"
+                    onClick={() => setShowNewPlaylistForm((prev) => !prev)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-blue-500 hover:bg-blue-600"
+                    onClick={() =>
+                      toast.promise(createNewPlaylist(), {
+                        pending: 'Creating playlist...',
+                        success: 'Playlist created and video added!',
+                        error: 'Error creating playlist',
+                      })
+                    }
+                  >
+                    Save changes
+                  </Button>
+                </DialogFooter>
+              </>
+            )}
           </div>
-          <DialogFooter>
-            <Button type="submit" onClick={createNewPlaylist}>Save changes</Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* <ToastContainer /> */}
     </div>
   );
 }

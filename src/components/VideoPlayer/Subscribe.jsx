@@ -1,21 +1,36 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import subscriptionUtils from '@/utils/subscription.utils'
+import { toast } from 'react-toastify'
 
 function Subscribe({ channelId }) {
-
-
   const user = useSelector(state => state.auth.status)
+  const userData = useSelector(state => state.auth.userData)
   const [subscribed, setSubscribed] = useState()
 
-  const subscribeHandler = async () => {
+  useEffect(() => {
+    const fetchSubscribedChannels = async () => {
+      try {
+        const response = await subscriptionUtils.getSubscribedChannels({ subscriberId: userData._id })
+        const matched = response.data.data.channels.some(channel => channel._id === channelId)
+        setSubscribed(matched)
+      } catch (error) {
+        console.error('Error fetching subscribed channels: ', error)
+      }
+    }
 
+    if (user) {
+      fetchSubscribedChannels()
+    }
+  }, [channelId, user, userData])
+
+  const subscribeHandler = async () => {
     try {
       if (!user) {
         // TODO TOAST: Login to Subcribe the channel
-        console.log('Login to Subscribe the channel')
+        toast.error('Login to Subscribe the channel')
         return
       }
 
@@ -25,12 +40,14 @@ function Subscribe({ channelId }) {
           withCredentials: true,
         }
       )
-
-      // console.log(response.data.data)
       setSubscribed(response.data.data.subscribed)
       //SHOW TOAST accordingly
+      if (response.data.data.subscribed) {
+        toast.success('Subscribed to the channel')
+      } else {
+        toast.success('Unsubscribed from the channel')
+      }
     }
-
     catch (error) {
       console.error('Error subscribing channel: ', error)
     }

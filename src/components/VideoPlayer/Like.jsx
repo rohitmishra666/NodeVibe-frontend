@@ -2,17 +2,18 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import like from '@/utils/like.utils.js'
+import { toast } from 'react-toastify'
 
-function Like() {
+function Like({isLiked=false}) {
 
   const param = useParams()
   const user = useSelector(state => state.auth.status)
-  const [liked, setLiked] = useState(true)
+  const [liked, setLiked] = useState(isLiked)
   const likeHandler = async () => {
     try {
       if(!user) {
         // TODO TOAST: Login to like the video
-        console.log('Login to like the video')
+        toast.error('Login to like the video')
         return
       }
 
@@ -20,7 +21,7 @@ function Like() {
       console.log(response)
       // //response.data.data.liked = true / false
       setLiked(response.data.data.liked)
-      //SHOW TOAST accordingly
+      toast.success(`Video ${response.data.data.liked ? 'liked' : 'unliked'}`)
     }
     catch(error) {
       console.error('Error liking video: ', error)
@@ -37,7 +38,7 @@ function Like() {
           src="https://cdn.lordicon.com/jjoolpwc.json"
           trigger="hover"
           stroke="bold"
-          colors={liked ? "": "primary:#9cf4df,secondary:#d4f49c"}
+          colors={!liked ? "primary:#ffffff,secondary:#ffffff": "primary:#9cf4df,secondary:#d4f49c"}
         >
         </lord-icon>
       </button>

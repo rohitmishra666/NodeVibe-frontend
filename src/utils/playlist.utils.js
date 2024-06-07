@@ -24,7 +24,7 @@ export class Playlist {
 
         try {
             return await axios.get(
-                import.meta.env.VITE_PLAYLIST_URL +`/user/${userId}`,
+                import.meta.env.VITE_PLAYLIST_URL + `/user/${userId}`,
                 {
                 },
                 {
@@ -88,6 +88,9 @@ export class Playlist {
                 {
                     name: playlistName,
                     description: description,
+                },
+                {
+                    withCredentials: true,
                 }
             )
         } catch (error) {

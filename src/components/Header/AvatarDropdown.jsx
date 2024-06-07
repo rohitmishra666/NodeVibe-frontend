@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import userUtils from "@/utils/user.utils";
-import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,8 +19,8 @@ function AvatarDropdown() {
     const state = useSelector((state) => state.auth.status);
 
     const heightWidth = {
-        width: "50px",
         height: "50px",
+        width: "50px",
     };
 
     const navigate = useNavigate();
@@ -31,52 +31,43 @@ function AvatarDropdown() {
     // console.log(avatarUrl)
     const dispatch = useDispatch();
 
-    //TODO - Add token to header
-
-    const header = {
-        "content-type": "application/json",
-        // "Authorization": "Bearer"
-    };
-
     const logoutHandler = async () => {
         if (state) {
             const response = await userUtils.logout();
-
             if (!response) {
                 throw new Error("Failed to logout!");
             }
             dispatch(logout());
             navigate("/login");
-            console.log("Logged out", response);
         }
     };
 
     return (
         <Avatar>
             <DropdownMenu>
-                <DropdownMenuTrigger>
-                    {(state && (
+                {(state && (
+                    <DropdownMenuTrigger>
                         <AvatarImage
                             className="rounded-full h-16 w-16 overflow-hidden object-cover"
                             src={avatarUrl}
                         />
-                    )) || (
-                            <div
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    navigate("/login");
-                                }}
-                                className="mt-2 cursor-pointer"
-                            >
-                                <lord-icon
-                                    src="https://cdn.lordicon.com/hrjifpbq.json"
-                                    trigger="hover"
-                                    colors="primary:#c7c116"
-                                    style={heightWidth}
-                                ></lord-icon>
-                            </div>
-                        )}
-                </DropdownMenuTrigger>
+                    </DropdownMenuTrigger>
+                )) || (
+                        <div
+                            onClick={(e) => {
+                                e.preventDefault();
+                                navigate("/login");
+                            }}
+                            className="mt-2 cursor-pointer"
+                        >
+                            <lord-icon
+                                src="https://cdn.lordicon.com/hrjifpbq.json"
+                                trigger="hover"
+                                colors="primary:#c7c116"
+                                style={heightWidth}
+                            ></lord-icon>
+                        </div>
+                    )}
                 {state && (
                     <DropdownMenuContent
                         className="flex flex-col text-center">

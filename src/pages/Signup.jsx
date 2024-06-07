@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { login as authLogin } from '@/store/authSlice'
+import { handleHtmlError } from '@/utils/error.utils'
+import { toast } from 'react-toastify'
 
 function Signup() {
   const { register, handleSubmit } = useForm()
@@ -16,20 +18,26 @@ function Signup() {
     setError(null)
     const createdUser = await userUtils.register(data)
 
-    if (createdUser) {
-      console.log(createdUser, 'createdUser')
+    if (createdUser?.data?.statusCode === 200) {
       dispatch(authLogin(createdUser.data.data))
       navigate("/")
-    }
-    else {
-      setError(createdUser.data.message)
+    } else {
+      setError(handleHtmlError(createdUser))
     }
   }
 
+  const handleSignUp = (data) => {
+    toast.promise(signUp(data), {
+      loading: "Signing up...",
+      success: "Signed up successfully",
+      error: "Failed to sign up",
+    })
+  }
+
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-md mx-auto mt-5">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <form onSubmit={handleSubmit(signUp)}>
+        <form onSubmit={handleSubmit(handleSignUp)}>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fullName">
               Full Name
@@ -87,7 +95,7 @@ function Signup() {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="avatar"
               type="file"
-              accept='image/*'
+              accept="image/*"
               placeholder=""
             />
           </div>
@@ -101,12 +109,13 @@ function Signup() {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="coverImage"
               type="file"
-              accept='image/*'
+              accept="image/*"
               placeholder="Enter URL of your cover image"
             />
           </div>
           <div className="flex flex-col items-center gap-2 justify-center">
-            <p>Already have an account?&nbsp;
+            <p>
+              Already have an account?&nbsp;
               <a
                 className="text-blue-600 text-lg hover:underline font-semibold"
                 href="/login">
@@ -114,20 +123,19 @@ function Signup() {
               </a>
             </p>
             <button
-              type='submit'
-              // onSubmit={handleSubmit(signUp)}
+              type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Sign Up
             </button>
-            <p className='bg-transparent text-gray-600 text-center'>
-              By signing up, you agree to our Terms , Privacy Policy and Cookies Policy.
+            <p className="bg-transparent text-gray-600 text-center">
+              By signing up, you agree to our Terms, Privacy Policy and Cookies Policy.
             </p>
           </div>
         </form>
       </div>
-    </div >
-  );
+    </div>
+  )
 }
 
 export default Signup

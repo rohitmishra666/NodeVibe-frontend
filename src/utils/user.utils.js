@@ -4,7 +4,6 @@ export class User {
 
     async register(data) {
         try {
-            console.log("register :: data", data)
             return await axios.post(import.meta.env.VITE_USER_URL + "/register",
                 {
                     fullName: data.fullName,
@@ -41,38 +40,42 @@ export class User {
             )
         } catch (error) {
             console.log("login :: error", error)
+            return error;
         }
     }
 
     async logout() {
-        return axios.post(
-            import.meta.env.VITE_USER_URL + "/logout",
-            {},
-            {
-                withCredentials: true,
-            }
-        );
-    }
-
-    async refreshToken({ refreshToken }) {
         try {
-            return axios.post(
-                import.meta.env.VITE_USER_URL + "/refresh-token",
-                {
-                    refreshToken: refreshToken
-                },
+            return await axios.post(
+                import.meta.env.VITE_USER_URL + "/logout",
+                {},
                 {
                     withCredentials: true,
                 }
             );
         } catch (error) {
-            console.log("refreshToken :: error", error)
+            console.log("logout :: error", error)
+        }
+    }
+
+    async refreshToken({ refreshToken = "" }) {
+        try {
+            return await axios.post(
+                import.meta.env.VITE_USER_URL + "/refresh-token",
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
+        } catch (error) {
+            // console.log("refreshToken :: error", error)
+            return error
         }
     }
 
     async changePassword({ oldPassword, newPassword }) {
         try {
-            return axios.post(
+            return await axios.post(
                 import.meta.env.VITE_USER_URL + "/change-password",
                 {
                     oldPassword: oldPassword,
@@ -89,7 +92,7 @@ export class User {
 
     async getUser() {
         try {
-            return axios.get(
+            return await axios.get(
                 import.meta.env.VITE_USER_URL + "/current-user",
                 {
                     withCredentials: true,
@@ -100,15 +103,18 @@ export class User {
         }
     }
 
-    async updateUser({ fullName, username }) {
+    async updateUser({ fullName, email }) {
         try {
-            return axios.patch(
-                import.meta.env.VITE_USER_URL + "/update",
+            return await axios.patch(
+                import.meta.env.VITE_USER_URL + "/update-account",
                 {
                     fullName: fullName,
-                    username: username
+                    email: email
                 },
                 {
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     withCredentials: true,
                 }
             );
@@ -119,12 +125,16 @@ export class User {
 
     async updateAvatar({ avatar }) {
         try {
-            return axios.patch(
+            console.log("updateAvatar :: data", avatar)
+            return await axios.patch(
                 import.meta.env.VITE_USER_URL + "/avatar",
                 {
                     avatar: avatar
                 },
                 {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    },
                     withCredentials: true,
                 }
             );
@@ -135,23 +145,27 @@ export class User {
 
     async updateCoverImage({ coverImage }) {
         try {
-            return axios.patch(
+            return await axios.patch(
                 import.meta.env.VITE_USER_URL + "/cover-image",
                 {
                     coverImage: coverImage
                 },
                 {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    },
                     withCredentials: true,
                 }
             );
         } catch (error) {
             console.log("updateCoverImage :: error", error)
+            return error;
         }
     }
 
     async getUserChannelProfile({ username }) {
         try {
-            return axios.get(
+            return await axios.get(
                 import.meta.env.VITE_USER_URL + `/c/${username}`,
                 {
                     withCredentials: true,
@@ -162,9 +176,9 @@ export class User {
         }
     }
 
-    async getUserWatchHistory(){
+    async getUserWatchHistory() {
         try {
-            return axios.get(
+            return await axios.get(
                 import.meta.env.VITE_USER_URL + "/history",
                 {
                     withCredentials: true,

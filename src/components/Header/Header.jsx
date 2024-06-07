@@ -1,30 +1,34 @@
-import React from 'react'
-import Logo from './Logo'
-import AvatarDropdown from './AvatarDropdown'
-import Search from './Search'
-import Autocomplete from './Autocomplete'
+import React, { useState } from 'react';
+import Logo from './Logo';
+import AvatarDropdown from './AvatarDropdown';
+import Search from './Search';
+import Autocomplete from './Autocomplete';
 
 function Header() {
+    const [isSearchActive, setIsSearchActive] = useState(false);
+
     return (
-        <header className="w-full bg-gray-700">
-            <div className='flex flex-row  w-full justify-between'>
-                <div className=' sm:px-4 w-auto my-2'>
+        <header className="fixed top-0 left-0 w-full bg-gray-900 shadow-md z-10">
+            <div className="flex items-center justify-between w-full gap-6 p-4">
+                <div className="flex items-center">
                     <Logo />
                 </div>
-                <div className='sm:basis-2/4 sm:px-2 p-2 h-16 my-2 flex flex-col'>
-                    <div className='flex flex-row'>
-                        <Search />
-                    </div>
-                    <div className='z-50 '>
-                        <Autocomplete />
+                <div className="flex-1 mx-4">
+                    <div className="relative w-auto">
+                        <Search setIsSearchActive={setIsSearchActive} />
+                        {isSearchActive && (
+                            <div className="absolute top-full w-full z-50">
+                                <Autocomplete />
+                            </div>
+                        )}
                     </div>
                 </div>
-                <div className='hidden sm:block sm:basis-1/12 py-1.5'>
+                <div className="hidden sm:block mr-10">
                     <AvatarDropdown />
                 </div>
             </div>
         </header>
-    )
+    );
 }
 
-export default Header
+export default Header;

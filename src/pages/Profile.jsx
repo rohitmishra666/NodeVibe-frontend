@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaHeart, FaEye, FaPlus } from 'react-icons/fa';
+import { FaUser, FaHeart, FaEye, FaPlus, FaVideo } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import dashboard from '@/utils/dashboard.utils';
 import { formatDate } from '@/utils/timeAgo.utils';
 import videoUtils from '@/utils/video.utils';
 import { useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { handleHtmlError } from '@/utils/error.utils';
 
 const Profile = () => {
   const userData = useSelector((state) => state.auth.userData);
   const [videos, setVideos] = useState([]);
   const [channelStats, setChannelStats] = useState({});
-  const { register, handleSubmit, reset, setValue } = useForm();
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editVideoId, setEditVideoId] = useState(null);
@@ -27,27 +30,59 @@ const Profile = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    console.log(data, 'form data');
-
-    if (editMode) {
-      const response = await videoUtils.updateVideo(data, editVideoId);
-      console.log(response, 'Video updated successfully');
+    if (editMode && data.title && data.description && data.thumbnail[0]) {
+      await toast.promise(
+        videoUtils.updateVideo(data, editVideoId),
+        {
+          pending: 'Updating video...',
+          success: 'Video updated successfully!',
+          error: 'Error updating video!'
+        }
+      );
     } else {
-      const response = await videoUtils.publishVideo(data);
-      console.log(response, 'Video uploaded successfully');
+      const id = await toast.promise(
+        videoUtils.publishVideo(data),
+        {
+          pending: 'Uploading video...',
+          success: {
+            render({ data }) {
+              console.log(data, "This is data");
+              if (data.data.statusCode == 201) {
+                return 'Video uploaded successfully!';
+              }
+              else {
+                toast.update(id, { 
+                  type: 'error', render: 'Error uploading video!'});
+              }
+            },
+          },
+          error: {
+            render({ data }) {
+              console.log(handleHtmlError(data), "This is error");
+              return 'Error uploading video!';
+            }
+          }
+        }
+      );
     }
     const channelVideos = await dashboard.getChannelVideos();
     setVideos(channelVideos.data.data.videos);
-    reset(); 
-    setShowModal(false); 
-    setEditMode(false); 
+    reset();
+    setShowModal(false);
+    setEditMode(false);
   };
 
   const deleteVideo = async (videoId) => {
-    const response = await videoUtils.deleteVideo({ videoId });
+    await toast.promise(
+      videoUtils.deleteVideo({ videoId }),
+      {
+        pending: 'Deleting video...',
+        success: 'Video deleted successfully!',
+        error: 'Error deleting video!'
+      }
+    );
     setVideos(videos.filter(video => video._id !== videoId));
-    console.log(response, 'Video deleted successfully!');
-  }
+  };
 
   const editVideo = (video) => {
     setEditMode(true);
@@ -55,14 +90,14 @@ const Profile = () => {
     setValue('title', video.title);
     setValue('description', video.description);
     setShowModal(true);
-  }
+  };
 
   const openUploadModal = () => {
     setEditMode(false);
     setEditVideoId(null);
-    reset(); 
+    reset();
     setShowModal(true);
-  }
+  };
 
   return (
     <div className="bg-gray-900 text-white p-6 min-h-screen w-full">
@@ -71,7 +106,7 @@ const Profile = () => {
         <div className="flex justify-around mt-6">
           <StatItem icon={<FaEye />} label="Total views" value={channelStats?.totalViews} />
           <StatItem icon={<FaUser />} label="Total subscribers" value={channelStats?.totalSubcribers} />
-          <StatItem icon={<FaHeart />} label="Total likes" value={channelStats?.totalLikes} />
+          <StatItem icon={<FaVideo />} label="Total Videos" value={channelStats?.totalVideos} />
         </div>
         <button
           onClick={openUploadModal}
@@ -80,7 +115,7 @@ const Profile = () => {
           <FaPlus className="mr-2" /> Upload video
         </button>
       </header>
-      <div className="w-full">
+      <div className="w-full overflow-x-auto">
         <table className="bg-gray-800 rounded-lg w-full">
           <thead>
             <tr>
@@ -94,12 +129,12 @@ const Profile = () => {
           </thead>
           <tbody>
             {videos.map((video) => (
-              <tr key={uuid()} className="bg-gray-700 odd:bg-gray-600 w-full">
-                <td className="px-4 py-2 text-center"><StatusToggle status={video.isPublished} id={uuid()} /></td>
-                <td className="px-4 py-2 text-center"><img src={video.thumbnail} alt={video.title} className="w-12 h-12 rounded-full" /></td>
-                <td className="px-4 py-2">{video.title}</td>
-                <td className="px-4 py-2">{video.likes} likes</td>
-                <td className="px-4 py-2">{formatDate(video.createdAt.slice(0, 10))}</td>
+              <tr key={uuid()} className="bg-gray-700 odd:bg-gray-600">
+                <td className="px-4 py-2 text-center"><StatusToggle status={video.isPublished} id={video._id} /></td>
+                <td className="px-4 py-2 text-center"><img src={video.thumbnail} alt={video.title} className="w-12 h-12 rounded-full mx-auto" /></td>
+                <td className="px-4 py-2 text-center">{video.title}</td>
+                <td className="px-4 py-2 text-center">{video.likes} likes</td>
+                <td className="px-4 py-2 text-center">{formatDate(video.createdAt.slice(0, 10))}</td>
                 <td className="px-4 py-2 text-center">
                   <button className="text-blue-500 hover:text-blue-700 mr-2" onClick={() => editVideo(video)}>✏️</button>
                   <button
@@ -110,6 +145,7 @@ const Profile = () => {
             ))}
           </tbody>
         </table>
+        <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="dark" />
       </div>
 
       {/* Modal */}
@@ -125,17 +161,19 @@ const Profile = () => {
                 <label className="block text-sm">Title</label>
                 <input
                   type="text"
-                  {...register('title')}
+                  {...register('title', { required: 'Title is required' })}
                   className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                 />
+                {errors.title && <span className="text-red-500">{errors.title.message}</span>}
               </div>
               <div>
                 <label className="block text-sm">Description</label>
                 <input
                   type="text"
-                  {...register('description')}
+                  {...register('description', { required: 'Description is required' })}
                   className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                 />
+                {errors.description && <span className="text-red-500">{errors.description.message}</span>}
               </div>
               <div>
                 <label className="block text-sm">Thumbnail</label>
@@ -143,18 +181,22 @@ const Profile = () => {
                   className="w-full px-4 py-2 h-auto bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
                   type="file"
                   accept='image/*'
-                  {...register('thumbnail')}
+                  {...register('thumbnail', { required: 'Thumbnail is required' })}
                 />
+                {errors.thumbnail && <span className="text-red-500">{errors.thumbnail.message}</span>}
               </div>
-              {!editMode && (<div>
-                <label className="block text-sm">Video</label>
-                <input
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
-                  type="file"
-                  accept='video/*'
-                  {...register('videoFile')}
-                />
-              </div>)}
+              {!editMode && (
+                <div>
+                  <label className="block text-sm">Video</label>
+                  <input
+                    className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    type="file"
+                    accept='video/*'
+                    {...register('videoFile', { required: 'Video file is required' })}
+                  />
+                  {errors.videoFile && <span className="text-red-500">{errors.videoFile.message}</span>}
+                </div>
+              )}
               <div className="text-right">
                 <button
                   type="button"
@@ -190,9 +232,23 @@ const StatusToggle = ({ status, id }) => {
   const [isPublished, setIsPublished] = useState(status);
 
   const toggleStatus = async () => {
-    const response = await videoUtils.toggleStatus({ videoId: id });
-    console.log(response);
-    setIsPublished(!isPublished);
+    await toast.promise(
+      videoUtils.toggleStatus({ videoId: id }),
+      {
+        pending: 'Toggling status...',
+        success: {
+          render({ data }) {
+            console.log(data, "This is data");
+            if (data.data.statusCode === 209) {
+              return `Video ${data.data.data.publishStatus ? 'published' : 'unpublished'} successfully!`;
+            }
+          },
+        },
+        error: 'Error toggling status!'
+      }
+    );
+    setIsPublished((prev)=>  !prev);
+    
   };
 
   return (

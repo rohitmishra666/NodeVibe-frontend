@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRef } from 'react'
+import { toast } from 'react-toastify'
 
 function Share() {
 
@@ -10,7 +11,7 @@ function Share() {
     navigator.clipboard.writeText(window.location.href)
     .then(() => {
       // TODO: Show a toast message
-      console.log('URL copied to clipboard')
+      toast.success('URL copied to clipboard')
     })
     .catch((error) => {
       console.error('Error copying URL to clipboard: ', error)
@@ -26,6 +27,7 @@ function Share() {
         <lord-icon
           src="https://cdn.lordicon.com/dxnllioo.json"
           trigger="hover"
+          colors="primary:#ffffff,secondary:#9cf4df"
           stroke="bold"
         >
         </lord-icon>

@@ -33,6 +33,9 @@ export class Like {
         try {
             return await axios.get(
                 `${import.meta.env.VITE_LIKES_URL}/videos`,
+                {
+                    withCredentials: true
+                }
             )
         } catch (error) {
             console.log("getLikedVideos :: error", error)

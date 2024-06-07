@@ -1,43 +1,47 @@
-import React, { useEffect } from 'react'
-import { useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { debouncedAutocomplete } from '@/components/Header/Autocomplete'
+import React, { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { debouncedAutocomplete } from '@/components/Header/Autocomplete';
 
-function Search() {
+function Search({ setIsSearchActive }) {
+    const searchRef = useRef();
+    const navigate = useNavigate();
 
-    const searchRef = useRef()
-    const navigate = useNavigate()
+    const handleFocus = () => {
+        setIsSearchActive(true);
+    };
 
-    // const consoleDebounce = useDebounce(() => {
-    //     console.log(searchRef.current?.value || 'empty')
-    // }, 1000)
+    const handleBlur = () => {
+        setTimeout(() => setIsSearchActive(false), 100);
+        // Delay to allow click on autocomplete
+    };
 
     return (
-        <>
+        <div className="flex items-center ml-24 w-auto">
             <input
                 type='text'
                 placeholder='Search'
                 ref={searchRef}
-                onChange={() => {
-                    // consoleDebounce()
-                    debouncedAutocomplete(searchRef.current?.value || 'a')
-                }}
-                className='sm:w-full p-2 w-4/5 rounded-l-md'
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                onClick={() => debouncedAutocomplete(searchRef.current?.value || 'a')}
+                onChange={() => debouncedAutocomplete(searchRef.current?.value || 'a')}
+                className='w-[70%] p-2 rounded-l-md border border-gray-300 focus:border-blue-500 focus:outline-none transition-colors duration-300'
             />
             <button
                 onClick={(e) => {
-                    e.preventDefault()
-                    navigate(`/search/${searchRef.current.value}`)
+                    e.preventDefault();
+                    navigate(`/search/${searchRef.current.value}`);
                 }}
-                className='rounded-r-md px-2 py-1 bg-red-500'>
+                className='bg-blue-500 hover:bg-blue-600 text-white rounded-r-md px-4 py-2 transition-colors duration-300 flex items-center'
+            >
                 <lord-icon
                     src="https://cdn.lordicon.com/fkdzyfle.json"
                     trigger="hover"
-                >
-                </lord-icon>
+                    style={{ width: '24px', height: '24px' }}
+                />
             </button>
-        </>
-    )
+        </div>
+    );
 }
 
-export default Search
+export default Search;

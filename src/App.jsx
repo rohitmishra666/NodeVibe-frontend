@@ -1,46 +1,68 @@
 import { useNavigate, Outlet } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
 import Navbar from "./components/Navbar/Navbar";
-import { useDispatch } from "react-redux";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "./store/authSlice";
+import { ToastContainer } from "react-toastify";
+import userUtils from "./utils/user.utils.js";
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // axios.get(import.meta.env.VITE_USER_URL + "/current-user").then((response) => {
-  //   if (response) {
-  //     console.log(response.data.data);
-  //     dispatch(login(response.data.data));
-  //   }
-  //   else {
-  //     dispatch(logout());
-  //     navigate("/login");
-  //   }
-  //   setLoading(false);
-  // });
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await userUtils.getUser();
+        if (response.data.statusCode === 200) {
+          dispatch(login(
+            {
+              user: response.data.data,
+            })
+          );
+        }
+      } catch (error) {
+        dispatch(logout());
+      } finally {
+        setLoading(false); 
+      }
+    };
+    fetchUser();
+  }, [dispatch, navigate]);
 
   return !loading ? (
-    <>
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <div className="flex flex-row flex-grow">
-          <div className="hidden sm:flex w-16 bg-blue-500 sm:items-center sm:justify-center">
-            <Navbar />
-          </div>
-          <div className="w-full flex flex-row bg-fuchsia-300">
-            <Outlet />
-          </div>
-        </div>
-        <Footer />
+    <div className="flex flex-col bg-gray-900 min-h-screen">
+      <Header />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+      <div className="flex flex-row flex-grow pt-20"> {/* Add pt-20 to add padding-top */}
+        <aside className="hidden sm:flex sm:items-start sm:justify-start w-16 bg-gray-900">
+          <Navbar />
+        </aside>
+        <main className="flex-grow w-full flex flex-col md:w-full ml-5 bg-gray-900">
+          <Outlet />
+        </main>
       </div>
-    </>
+      <Footer />
+    </div>
   ) : (
-    <h1>LOADING...</h1>
+    <div className="flex items-center justify-center min-h-screen">
+      <h1>LOADING...</h1>
+    </div>
   );
 }
 

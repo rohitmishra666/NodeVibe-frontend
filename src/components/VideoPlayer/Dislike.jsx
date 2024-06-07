@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import { toast } from 'react-toastify'
 
 function Dislike() {
   
@@ -6,6 +7,7 @@ function Dislike() {
 
   const dislikeHandler = () => {
     setDislike(!dislike)
+    toast.success(`${!dislike ? 'Video disliked' : 'Dislike removed'}`)
   }
 
   return (
@@ -16,7 +18,7 @@ function Dislike() {
         <lord-icon
           src="https://cdn.lordicon.com/xzybfbcm.json"
           stroke="bold"
-          colors={!dislike ? "": "primary:#9cf4df,secondary:#d4f49c"}
+          colors={!dislike ? "primary:#ffffff,secondary:#ffffff": "primary:#9cf4df,secondary:#d4f49c"}
           trigger="hover"
         >
         </lord-icon>

@@ -11,7 +11,6 @@ function Search() {
 
   useEffect(() => {
     axios.post(import.meta.env.VITE_VIDEO_URL, { query }).then((response) => {
-      console.log(response)
       setSearchResults(response.data.data.video)
     })
   }, [query])

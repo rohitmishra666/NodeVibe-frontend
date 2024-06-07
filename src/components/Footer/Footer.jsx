@@ -2,8 +2,8 @@ import React from 'react'
 
 function Footer() {
     return (
-        <footer className="flex bg-fuchsia-400 bottom-5 w-full items-center justify-center">
-            Footer
+        <footer className="flex fixed bg-gray-900 bottom-0 w-full items-center text-white justify-center">
+            ABOUT
         </footer>
     )
 }

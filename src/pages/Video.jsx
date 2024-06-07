@@ -1,33 +1,37 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import VideoPlayer from '../components/VideoPlayer/VideoPlayer'
-import CommentOpener from '../pages/CommentOpener'
-import videoUtils from '../utils/video.utils'
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import VideoPlayer from '../components/VideoPlayer/VideoPlayer';
+import CommentOpener from '../pages/CommentOpener';
+import videoUtils from '../utils/video.utils';
 
 function Video() {
-
-  const [video, setVideo] = useState(null)
-  const param = useParams()
+  const [video, setVideo] = useState(null);
+  const { videoId } = useParams();
 
   useEffect(() => {
-    async function getVideo() {
-      // const response = await axios.get(import.meta.env.VITE_VIDEO_URL + `/${param.videoId}`)
-      const response = await videoUtils.getVideoById({ videoId: param.videoId })
-      const videoFile = response.data.data.video[0]
-      setVideo(videoFile)
+    async function fetchVideo() {
+      try {
+        const response = await videoUtils.getVideoById({ videoId });
+        const videoData = response.data.data.video[0];
+        setVideo(videoData);
+      } catch (error) {
+        console.error('Error fetching video:', error);
+      }
     }
 
-    getVideo()
-  }, [param.videoId])
+    fetchVideo();
+  }, [videoId]);
 
   return (
-    <>
-      {video && (<div>
-        <VideoPlayer data={video} />
-        <CommentOpener videoId={param.videoId} />
-      </div>)}
-    </>
-  )
+    <div className="container mx-auto mt-6">
+      {video && (
+        <>
+          <VideoPlayer data={video} />
+          <CommentOpener videoId={videoId} />
+        </>
+      )}
+    </div>
+  );
 }
 
-export default Video
+export default Video;

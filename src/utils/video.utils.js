@@ -3,7 +3,11 @@ export class Video {
 
     async getAllVideos() {
         try {
-            return await axios.get(import.meta.env.VITE_VIDEO_URL)
+            return await axios.get(import.meta.env.VITE_VIDEO_URL + '/',
+                {
+                    withCredentials: true
+                }
+            )
         } catch (error) {
             console.log("getAllVideos :: error", error)
         }
@@ -28,6 +32,7 @@ export class Video {
             )
         } catch (error) {
             console.log("publishVideo :: error", error)
+            return error
         }
     }
 
@@ -61,7 +66,9 @@ export class Video {
                 }
             )
         } catch (error) {
+
             console.log("updateVideo :: error", error)
+            return error
         }
     }
 
@@ -88,6 +95,7 @@ export class Video {
             )
         } catch (error) {
             console.log("toggleStatus :: error", error)
+            return error
         }
     }
 }
