@@ -46,10 +46,14 @@ export class User {
 
     async logout() {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.post(
                 import.meta.env.VITE_USER_URL + "/logout",
                 {},
                 {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
                     withCredentials: true,
                 }
             );

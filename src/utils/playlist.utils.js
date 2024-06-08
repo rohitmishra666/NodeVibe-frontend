@@ -51,6 +51,7 @@ export class Playlist {
             const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.patch(
                 `${import.meta.env.VITE_PLAYLIST_URL}/add/${videoId}/${playlistId}`,
+                {},
                 {
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
