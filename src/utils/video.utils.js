@@ -15,6 +15,7 @@ export class Video {
 
     async publishVideo(data) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.post(
                 import.meta.env.VITE_VIDEO_URL + "/publish",
                 {
@@ -25,6 +26,7 @@ export class Video {
                 },
                 {
                     headers: {
+                        "Authorization": `Bearer ${accessToken}`,
                         "Content-Type": "multipart/form-data"
                     },
                     withCredentials: true,
@@ -38,10 +40,16 @@ export class Video {
 
     async getVideoById({ videoId }) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.get(
                 import.meta.env.VITE_VIDEO_URL + `/${videoId}`,
                 {
+
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
                     withCredentials: true
+
                 }
             )
         } catch (error) {
@@ -51,6 +59,7 @@ export class Video {
 
     async updateVideo(data, videoId) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.patch(
                 `${import.meta.env.VITE_VIDEO_URL}/${videoId}`,
                 {
@@ -60,6 +69,7 @@ export class Video {
                 },
                 {
                     headers: {
+                        "Authorization": `Bearer ${accessToken}`,
                         "Content-Type": "multipart/form-data"
                     },
                     withCredentials: true,
@@ -74,8 +84,12 @@ export class Video {
 
     async deleteVideo({ videoId }) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.delete(`${import.meta.env.VITE_VIDEO_URL}/${videoId}`,
                 {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
                     withCredentials: true,
                 }
             )
@@ -86,10 +100,14 @@ export class Video {
 
     async toggleStatus({ videoId }) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.patch(
                 `${import.meta.env.VITE_VIDEO_URL}/toggle/publish/${videoId}`,
                 {},
                 {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
                     withCredentials: true,
                 }
             )

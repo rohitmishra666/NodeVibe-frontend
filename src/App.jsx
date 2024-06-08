@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
 import Navbar from "./components/Navbar/Navbar";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { login, logout } from "./store/authSlice";
 import { ToastContainer } from "react-toastify";
 import userUtils from "./utils/user.utils.js";
@@ -19,16 +19,18 @@ function App() {
       try {
         const response = await userUtils.getUser();
         if (response.data.statusCode === 200) {
-          dispatch(login(
-            {
-              user: response.data.data,
-            })
-          );
+          const newTokens = await userUtils.refreshToken();
+          console.log(newTokens, 'newTokens');
+          dispatch(login({
+            user: response.data.data,
+            accessToken: newTokens.data.data.accessToken,
+            refreshToken: newTokens.data.data.refreshToken,
+          }))
         }
       } catch (error) {
         dispatch(logout());
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
     fetchUser();

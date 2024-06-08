@@ -122,7 +122,7 @@ function AddToPlaylist() {
     <div>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
-          <button onClick={playlistHandler} className="pt-1">
+          <button onClick={playlistHandler}>
             <lord-icon
               src="https://cdn.lordicon.com/ktcdipjm.json"
               trigger="hover"

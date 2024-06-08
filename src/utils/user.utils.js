@@ -33,7 +33,7 @@ export class User {
                 },
                 {
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
                     },
                     withCredentials: true
                 }
@@ -58,12 +58,16 @@ export class User {
         }
     }
 
-    async refreshToken({ refreshToken = "" }) {
+    async refreshToken() {
         try {
+            const refreshToken = JSON.parse(localStorage?.getItem("refreshToken"))
             return await axios.post(
                 import.meta.env.VITE_USER_URL + "/refresh-token",
                 {},
                 {
+                    headers: {
+                        "Authorization": `Bearer ${refreshToken}`,
+                    },
                     withCredentials: true,
                 }
             );
@@ -75,6 +79,7 @@ export class User {
 
     async changePassword({ oldPassword, newPassword }) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.post(
                 import.meta.env.VITE_USER_URL + "/change-password",
                 {
@@ -82,6 +87,9 @@ export class User {
                     newPassword: newPassword
                 },
                 {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
                     withCredentials: true,
                 }
             );
@@ -92,9 +100,14 @@ export class User {
 
     async getUser() {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
+            const refreshToken = JSON.parse(localStorage?.getItem("refreshToken"))
             return await axios.get(
                 import.meta.env.VITE_USER_URL + "/current-user",
                 {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`
+                    },
                     withCredentials: true,
                 }
             );
@@ -105,6 +118,8 @@ export class User {
 
     async updateUser({ fullName, email }) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
+            const refreshToken = JSON.parse(localStorage?.getItem("refreshToken"))
             return await axios.patch(
                 import.meta.env.VITE_USER_URL + "/update-account",
                 {
@@ -113,7 +128,8 @@ export class User {
                 },
                 {
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${accessToken}`,
                     },
                     withCredentials: true,
                 }
@@ -125,6 +141,7 @@ export class User {
 
     async updateAvatar({ avatar }) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             console.log("updateAvatar :: data", avatar)
             return await axios.patch(
                 import.meta.env.VITE_USER_URL + "/avatar",
@@ -133,7 +150,8 @@ export class User {
                 },
                 {
                     headers: {
-                        "Content-Type": "multipart/form-data"
+                        "Content-Type": "multipart/form-data",
+                        "Authorization": `Bearer ${accessToken}`
                     },
                     withCredentials: true,
                 }
@@ -145,6 +163,7 @@ export class User {
 
     async updateCoverImage({ coverImage }) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.patch(
                 import.meta.env.VITE_USER_URL + "/cover-image",
                 {
@@ -152,7 +171,8 @@ export class User {
                 },
                 {
                     headers: {
-                        "Content-Type": "multipart/form-data"
+                        "Content-Type": "multipart/form-data",
+                        "Authorization": `Bearer ${accessToken}`,
                     },
                     withCredentials: true,
                 }
@@ -165,6 +185,8 @@ export class User {
 
     async getUserChannelProfile({ username }) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
+            const refreshToken = JSON.parse(localStorage?.getItem("refreshToken"))
             return await axios.get(
                 import.meta.env.VITE_USER_URL + `/c/${username}`,
                 {
@@ -178,9 +200,13 @@ export class User {
 
     async getUserWatchHistory() {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.get(
                 import.meta.env.VITE_USER_URL + "/history",
                 {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`
+                    },
                     withCredentials: true,
                 }
             );

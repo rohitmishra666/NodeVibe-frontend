@@ -4,10 +4,14 @@ export class Subscription {
 
     async toggleSubscription({ channelId }) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.post(
                 `${import.meta.env.VITE_SUBSCRIPTION_URL}/c/${channelId}`,
                 {},
                 {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
                     withCredentials: true,
                 }
             )
@@ -18,8 +22,15 @@ export class Subscription {
 
     async getUserChannelSubscribers({ channelId }) {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.get(
                 `${import.meta.env.VITE_SUBSCRIPTION_URL}/c/${channelId}`,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                    withCredentials: true,
+                }
             )
         } catch (error) {
             console.log("getUserChannelSubscribers :: error", error)

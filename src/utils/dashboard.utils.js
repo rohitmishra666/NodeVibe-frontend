@@ -1,11 +1,15 @@
 import axios from 'axios'
-export class Dashboard{
+export class Dashboard {
 
     async getChannelStats() {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.get(
                 `${import.meta.env.VITE_DASHBOARD_URL}/stats`,
                 {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
                     withCredentials: true
                 }
             )
@@ -16,9 +20,13 @@ export class Dashboard{
 
     async getChannelVideos() {
         try {
+            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.get(
                 `${import.meta.env.VITE_DASHBOARD_URL}/videos`,
                 {
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
                     withCredentials: true
                 }
             )
