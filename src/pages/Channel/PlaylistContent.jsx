@@ -21,7 +21,6 @@ function PlaylistContent() {
         const response = await playlistUtils.getPlaylistById({ playlistId });
         const fetchedPlaylist = response.data.data.playlist[0];
         setPlaylist(fetchedPlaylist);
-        console.log(fetchedPlaylist, 'fetchedPlaylist')
         setFormData({
           name: fetchedPlaylist.name,
           description: fetchedPlaylist.description
@@ -51,9 +50,7 @@ function PlaylistContent() {
     e.preventDefault();
     try {
       // Update the playlist with the new name and description
-      console.log('Updating playlist:', formData);
       const response = await playlistUtils.updatePlaylist({ playlistId, playlistName: formData.name, description: formData.description });
-      console.log(response, 'response');
       setPlaylist((prevPlaylist) => ({
         ...prevPlaylist,
         name: formData.name,

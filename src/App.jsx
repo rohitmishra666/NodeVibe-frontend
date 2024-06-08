@@ -20,7 +20,6 @@ function App() {
         const response = await userUtils.getUser();
         if (response.data.statusCode === 200) {
           const newTokens = await userUtils.refreshToken();
-          console.log(newTokens, 'newTokens');
           dispatch(login({
             user: response.data.data,
             accessToken: newTokens.data.data.accessToken,

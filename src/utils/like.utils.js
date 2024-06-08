@@ -5,7 +5,6 @@ export class Like {
     async toggleVideoLike({ videoId }) {
         try {
             const accessToken = JSON.parse(localStorage.getItem("accessToken"))
-            console.log(localStorage.getItem("accessToken"))
             return await axios.post(import.meta.env.VITE_LIKES_URL + `/toggle/v/${videoId}`,
                 {},
                 {
@@ -25,13 +24,12 @@ export class Like {
             const accessToken = JSON.parse(localStorage.getItem("accessToken"))
             return await axios.post(
                 `${import.meta.env.VITE_LIKES_URL}/toggle/c/${commentId}`,
+                {},
                 {
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
-                    }
-                },
-                {
-                    withCredentials: true
+                    },
+                    withCredentials: true,
                 }
             )
         } catch (error) {
