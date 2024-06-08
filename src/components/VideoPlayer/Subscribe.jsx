@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
-import axios from 'axios'
 import { useSelector } from 'react-redux'
 import subscriptionUtils from '@/utils/subscription.utils'
 import { toast } from 'react-toastify'
@@ -33,13 +32,7 @@ function Subscribe({ channelId }) {
         toast.error('Login to Subscribe the channel')
         return
       }
-
-      const response = await axios.post(import.meta.env.VITE_SUBSCRIPTION_URL + `/c/${channelId}`,
-        {},
-        {
-          withCredentials: true,
-        }
-      )
+      const response = await subscriptionUtils.toggleSubscription({ channelId })
       setSubscribed(response.data.data.subscribed)
       //SHOW TOAST accordingly
       if (response.data.data.subscribed) {
