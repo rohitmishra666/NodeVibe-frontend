@@ -43,13 +43,11 @@ export class Video {
             const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
             return await axios.get(
                 import.meta.env.VITE_VIDEO_URL + `/${videoId}`,
-                {
-
+                {   
                     headers: {
-                        "Authorization": `Bearer ${accessToken}`,
+                        "Authorization": `Bearer ${accessToken?accessToken:null}`,
                     },
                     withCredentials: true
-
                 }
             )
         } catch (error) {

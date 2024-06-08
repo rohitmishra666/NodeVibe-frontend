@@ -1,9 +1,10 @@
 import axios from "axios";
-const accessToken = JSON.parse(localStorage.getItem("accessToken"))
+
 export class Like {
 
     async toggleVideoLike({ videoId }) {
         try {
+            const accessToken = JSON.parse(localStorage.getItem("accessToken"))
             console.log(localStorage.getItem("accessToken"))
             return await axios.post(import.meta.env.VITE_LIKES_URL + `/toggle/v/${videoId}`,
                 {},
@@ -21,6 +22,7 @@ export class Like {
 
     async toggleCommentLike({ commentId }) {
         try {
+            const accessToken = JSON.parse(localStorage.getItem("accessToken"))
             return await axios.post(
                 `${import.meta.env.VITE_LIKES_URL}/toggle/c/${commentId}`,
                 {
@@ -39,6 +41,7 @@ export class Like {
 
     async getLikedVideos() {
         try {
+            const accessToken = JSON.parse(localStorage.getItem("accessToken"))
             return await axios.get(
                 `${import.meta.env.VITE_LIKES_URL}/videos`,
                 {
