@@ -9,7 +9,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function PlaylistContent() {
-  const userStatus = useSelector((state) => state.auth.status);
   const userData= useSelector((state) => state.auth.userData);
   const { playlistId } = useParams();
   const [playlist, setPlaylist] = useState(null);
@@ -22,6 +21,7 @@ function PlaylistContent() {
         const response = await playlistUtils.getPlaylistById({ playlistId });
         const fetchedPlaylist = response.data.data.playlist[0];
         setPlaylist(fetchedPlaylist);
+        console.log(fetchedPlaylist, 'fetchedPlaylist')
         setFormData({
           name: fetchedPlaylist.name,
           description: fetchedPlaylist.description
@@ -89,7 +89,7 @@ function PlaylistContent() {
           <h2 className="text-2xl mb-1">{playlist.name}</h2>
           <p className="text-base mb-5 text-zinc-400">{playlist.description}</p>
         </div>
-        {userStatus && (
+        {userData._id===playlist.owner && (
           <div className="flex ml-10 gap-2">
             <button onClick={handleEditClick} className="text-blue-500 hover:text-blue-700">
               <FaEdit size={30}/>
@@ -109,9 +109,9 @@ function PlaylistContent() {
             description={video.description}
             duration={video.duration}
             date={video.createdAt}
-            author={video.username}
+            author={video.owner.username}
             id={video._id}
-            avatar={video.avatar}
+            avatar={video.owner.avatar}
             views={video.views}
           />
         ))}

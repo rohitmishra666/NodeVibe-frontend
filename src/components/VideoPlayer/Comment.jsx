@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 function Comment({ comment, thumbnail, username, time, id, setCommentUpdater }) {
     const navigate = useNavigate();
     const userStatus = useSelector(state => state.auth.status);
+    const userData =   useSelector(state => state.auth.userData);
     const [likeStatus, setLikeStatus] = useState(false);
 
     const likeComment = async (id) => {
@@ -39,7 +40,7 @@ function Comment({ comment, thumbnail, username, time, id, setCommentUpdater }) 
                     <p className="text-gray-200 text-sm ml-auto">{timeAgo(time)}</p>
                 </div>
                 <p className="text-base text-white">{comment}</p>
-                {userStatus && (
+                {userData.username===username && (
                     <div className="mt-5 flex items-center justify-start gap-1 text-gray-600">
                         <button
                             onClick={() => likeComment(id)}
