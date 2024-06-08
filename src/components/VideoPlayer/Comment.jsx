@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 function Comment({ comment, thumbnail, username, time, id, setCommentUpdater }) {
     const navigate = useNavigate();
     const userData = useSelector(state => state.auth.userData);
+    const userStatus = useSelector(state => state.auth.status);
     const [likeStatus, setLikeStatus] = useState(false);
 
     const likeComment = async (id) => {
@@ -38,15 +39,15 @@ function Comment({ comment, thumbnail, username, time, id, setCommentUpdater }) 
                 </div>
                 <p className="text-base text-white">{comment}</p>
                 <div className="mt-5 flex items-center justify-start gap-1 text-gray-600">
-                    <button
+                    {userStatus && <button
                         onClick={() => likeComment(id)}
                         className="group flex cursor-pointer items-center justify-around"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 rounded-full p-1   ${likeStatus ? 'text-red-500 fill-red-500' : 'group-hover:text-red-500 text-white fill-none'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                         </svg>
-                    </button>
-                    {userData.username === username && (<button
+                    </button>}
+                    {userStatus && (userData?.username === username) && (<button
                         onClick={() => deleteComment(id)}
                         className="group flex cursor-pointer items-center justify-around text-gray-600 group-hover:text-red-500"
                     >
