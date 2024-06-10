@@ -31,7 +31,7 @@ function Header({ setIsNavbarOpen, isNavbarOpen }) {
         <div className="block sm:hidden ml-1 mt-2">
           <button 
           onClick={toggleNavbar}
-          onBlur={toggleNavbar} 
+          onBlur={()=>{setIsNavbarOpen(false)}} 
           className="focus:outline-none">
             <svg
               className="w-6 h-6"
