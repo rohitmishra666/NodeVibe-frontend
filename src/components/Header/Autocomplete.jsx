@@ -27,8 +27,7 @@ function Autocomplete() {
   return (
     <>
       {searchResult.length > 0 &&
-        <div
-          className="bg-gray-800 rounded-lg border border-gray-600 p-4 absolute ml-24 w-[66%] z-10">
+        <div className="absolute w-full max-w-xl top-full mt-2 bg-gray-800 rounded-lg border border-gray-600 z-50">
           <ScrollArea>
             {searchResult.map((result) => (
               <div

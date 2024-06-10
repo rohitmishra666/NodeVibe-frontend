@@ -146,7 +146,6 @@ export class User {
     async updateAvatar({ avatar }) {
         try {
             const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
-            console.log("updateAvatar :: data", avatar)
             return await axios.patch(
                 import.meta.env.VITE_USER_URL + "/avatar",
                 {
@@ -154,8 +153,8 @@ export class User {
                 },
                 {
                     headers: {
-                        "Content-Type": "multipart/form-data",
-                        "Authorization": `Bearer ${accessToken}`
+                        "Authorization": `Bearer ${accessToken}`,
+                        "Content-Type": "multipart/form-data"
                     },
                     withCredentials: true,
                 }
@@ -175,8 +174,8 @@ export class User {
                 },
                 {
                     headers: {
-                        "Content-Type": "multipart/form-data",
                         "Authorization": `Bearer ${accessToken}`,
+                        "Content-Type": "multipart/form-data"
                     },
                     withCredentials: true,
                 }
@@ -189,8 +188,6 @@ export class User {
 
     async getUserChannelProfile({ username }) {
         try {
-            const accessToken = JSON.parse(localStorage?.getItem("accessToken"))
-            const refreshToken = JSON.parse(localStorage?.getItem("refreshToken"))
             return await axios.get(
                 import.meta.env.VITE_USER_URL + `/c/${username}`,
                 {

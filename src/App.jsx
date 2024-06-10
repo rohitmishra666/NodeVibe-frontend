@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [loading, setLoading] = useState(true);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false); // State for Navbar visibility
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -24,7 +25,7 @@ function App() {
             user: response.data.data,
             accessToken: newTokens.data.data.accessToken,
             refreshToken: newTokens.data.data.refreshToken,
-          }))
+          }));
         }
       } catch (error) {
         dispatch(logout());
@@ -36,8 +37,8 @@ function App() {
   }, [dispatch, navigate]);
 
   return !loading ? (
-    <div className="flex flex-col bg-gray-900 min-h-screen">
-      <Header />
+    <div className="flex flex-col bg-gray-900 min-h-screen max-w-screen">
+      <Header setIsNavbarOpen={setIsNavbarOpen} isNavbarOpen={isNavbarOpen} /> {/* Pass props */}
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
@@ -50,11 +51,15 @@ function App() {
         pauseOnHover
         theme="dark"
       />
-      <div className="flex flex-row flex-grow pt-20"> {/* Add pt-20 to add padding-top */}
-        <aside className="hidden sm:flex sm:items-start sm:justify-start w-16 bg-gray-900">
+      <div className="flex flex-row flex-grow pt-20">
+        <aside
+          className={`fixed transform ${
+            isNavbarOpen ? "translate-x-0" : "-translate-x-full"
+          } transition-transform duration-300 sm:translate-x-0 w-64 bg-gray-900 z-20`}
+        >
           <Navbar />
         </aside>
-        <main className="flex-grow w-full flex flex-col md:w-full ml-5 bg-gray-900">
+        <main className="flex-grow w-full flex flex-col md:w-full sm:ml-20 bg-gray-900">
           <Outlet />
         </main>
       </div>

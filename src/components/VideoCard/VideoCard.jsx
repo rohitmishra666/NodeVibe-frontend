@@ -30,7 +30,6 @@ function VideoCard({
       </div>
       <div className="flex flex-col p-4">
         <h1 className="text-lg font-semibold text-white line-clamp-2">{title}</h1>
-        <div className="mt-2 text-gray-300 line-clamp-2">{description}</div>
         <div className="mt-4 flex items-center text-sm text-gray-400">
           <span>{views} views</span>
           <span className="mx-1">•</span>

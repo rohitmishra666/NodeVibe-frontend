@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { login as authLogin } from '@/store/authSlice'
 import { handleHtmlError } from '@/utils/error.utils'
-import { toast } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 
 function Signup() {
   const { register, handleSubmit } = useForm()
@@ -134,6 +134,7 @@ function Signup() {
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   )
 }

@@ -23,7 +23,7 @@ function Video() {
   }, [videoId]);
 
   return (
-    <div className="container mx-auto mt-6">
+    <div className="container mx-auto mt-6 px-4">
       {video && (
         <>
           <VideoPlayer data={video} />

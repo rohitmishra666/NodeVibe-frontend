@@ -30,6 +30,7 @@ function Navbar() {
                         if (userStatus) {
                             navigate('/like');
                         } else {
+                            navigate('/login');
                             toast.error('Please login view liked videos');
                         }
                     }}
@@ -46,6 +47,7 @@ function Navbar() {
                         if (userStatus) {
                             navigate('/watchHistory')
                         } else {
+                            navigate('/login');
                             toast.error('Please login to view watch history')
                         }
                     }}
@@ -62,6 +64,7 @@ function Navbar() {
                         if (userStatus) {
                             navigate(`/channel/${userData.username}/home`)
                         } else {
+                            navigate('/login');
                             toast.error('Please login to view your channel')
                         }
                     }}
@@ -80,6 +83,7 @@ function Navbar() {
                         if (userStatus) {
                             navigate('/settings')
                         } else {
+                            navigate('/login');
                             toast.error('Please login to view settings')
                         }
                     }}
