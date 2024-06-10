@@ -16,7 +16,7 @@ function Search() {
   }, [query])
 
   return (
-    <div className="w-full flex flex-wrap">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {searchResults.map((video) => (
         <VideoCard
           key={uuid()}
@@ -24,9 +24,11 @@ function Search() {
           title={video.title}
           description={video.description}
           duration={video.duration}
-          date={video.date}
-          author={video.author}
+          date={video.createdAt}
+          author={video.owner.username}
+          avatar={video.owner.avatar}
           id={video._id}
+          views={video.views}
         />
       ))}
     </div>
