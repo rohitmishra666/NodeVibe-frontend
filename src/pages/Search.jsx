@@ -16,7 +16,7 @@ function Search() {
   }, [query])
 
   return (
-    <div className="w-full flex flex-wrap bg-red-500">
+    <div className="w-full flex flex-wrap">
       {searchResults.map((video) => (
         <VideoCard
           key={uuid()}
