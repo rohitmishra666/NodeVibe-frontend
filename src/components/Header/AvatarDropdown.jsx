@@ -13,6 +13,7 @@ import {
 import { logout } from "@/store/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function AvatarDropdown() {
     const user = useSelector((state) => state.auth.userData);
@@ -38,7 +39,9 @@ function AvatarDropdown() {
                 throw new Error("Failed to logout!");
             }
             dispatch(logout());
-            navigate("/login");
+            navigate("/");
+            toast.success("Logged out successfully");
+
         }
     };
 
