@@ -86,7 +86,7 @@ function PlaylistContent() {
           <h2 className="text-2xl mb-1">{playlist.name}</h2>
           <p className="text-base mb-5 text-zinc-400">{playlist.description}</p>
         </div>
-        {userData._id===playlist.owner && (
+        {userData && userData?._id===playlist.owner && (
           <div className="flex ml-10 gap-2">
             <button onClick={handleEditClick} className="text-blue-500 hover:text-blue-700">
               <FaEdit size={30}/>
